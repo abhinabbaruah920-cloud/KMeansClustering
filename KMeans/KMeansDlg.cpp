@@ -80,7 +80,7 @@ BOOL CKMeansDlg::OnInitDialog()
 
 	// Add "About..." menu item to system menu.
 
-	graph.Create(IDD_GRAPH,this);
+	graph.Create(IDD_GRAPH,this);		// Creating the Dlg box
 
 	// IDM_ABOUTBOX must be in the system command range.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
@@ -163,12 +163,12 @@ HCURSOR CKMeansDlg::OnQueryDragIcon()
 
 void CKMeansDlg::OnBnClickedImport()
 {
-    CFileDialog dlg(TRUE,_T("csv"),NULL,OFN_FILEMUSTEXIST,_T("CSV Files (*.csv)|*.csv||"));
-    if (dlg.DoModal() != IDOK)
+    CFileDialog dlg(TRUE,_T("csv"),NULL,OFN_FILEMUSTEXIST,_T("CSV Files (*.csv)|*.csv||"));			//importing only csv files
+    if (dlg.DoModal()!=IDOK)
         return;
 
-    CString filename = dlg.GetPathName();
-    // Convert CString to ANSI string
+    CString filename=dlg.GetPathName();				// getting the entire path of the file
+    // Convert CString to ANSI string for ifstream
     CStringA filenameA(filename);
     ifstream fin(filenameA);
     if (!fin.is_open()){
@@ -178,8 +178,8 @@ void CKMeansDlg::OnBnClickedImport()
 
     vector<Data> points;
     string line;
-    while(getline(fin,line)){
-        if (line.empty())
+    while(getline(fin,line)){			
+        if (line.empty())					// skipping blanks
             continue;
         stringstream ss(line);
         string xs;
@@ -189,13 +189,13 @@ void CKMeansDlg::OnBnClickedImport()
         if(!std::getline(ss,ys))			// taking y and assigning it to xy
             continue;
         Data d;
-        d.x = stod(xs);						// stod: string to double for x
-        d.y = stod(ys);						// stod for y
+        d.x=stod(xs);						// stod: string to double for x
+        d.y=stod(ys);						// stod for y
         points.push_back(d);				// appending to the vector
     }
 	fin.close();
 	
-	graph.SetPoints(points);
-	graph.ShowWindow(SW_SHOW);
-	graph.UpdateWindow();
+	graph.SetPoints(points);				//setting points to the Graph
+	graph.ShowWindow(SW_SHOW);				// showing the graph dialog window
+	graph.UpdateWindow();			
 }

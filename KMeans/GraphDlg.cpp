@@ -5,6 +5,7 @@
 #include "KMeans.h"
 #include "GraphDlg.h"
 #include "afxdialogex.h"
+// including file handling header files
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -44,7 +45,7 @@ void GraphDlg::OnPaint()
     CRect graph(10,10,900,680);
     dc.Rectangle(graph);
 
-    const int SCALE = 2;
+    const int SCALE =2;
 	int cx=(graph.left+graph.right)/2;
     int cy=(graph.top+graph.bottom)/2;
 

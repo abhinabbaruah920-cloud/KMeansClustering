@@ -10,7 +10,7 @@ class CKMeansDlg : public CDialogEx
 // Construction
 public:
 	CKMeansDlg(CWnd* pParent = NULL);	// standard constructor
-	GraphDlg graph;
+	GraphDlg graph;						// Creating obj of GraphDlg box
 
 
 // Dialog Data
