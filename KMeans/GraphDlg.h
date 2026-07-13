@@ -20,12 +20,12 @@ public:
 	virtual ~GraphDlg();
 
 	vector<Data> points;						// declaring a vector for Data objects
-	Data C1;									
-	Data C2;
-	double TotErr;
+	Data C1;									// Cluster 1
+	Data C2;									// Cluster 2
+	double TotErr;								// Total Error
     void SetPoints(const vector<Data>& p);		// function to set the Points
-	void Init();
-	double Dist(Data p1,Data p2);
+	void Init();								// initialize K Means
+	double Dist(Data p1,Data p2);				// Distance from clusters
 // Dialog Data
 	enum { IDD = IDD_GRAPH };
 
