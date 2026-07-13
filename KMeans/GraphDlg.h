@@ -8,6 +8,7 @@ using namespace std;
 struct Data{				// declaring structure to hold values of x and y
     double x;
     double y;
+	int cluster;
 	};
 
 class GraphDlg : public CDialogEx
@@ -19,7 +20,12 @@ public:
 	virtual ~GraphDlg();
 
 	vector<Data> points;						// declaring a vector for Data objects
+	Data C1;									
+	Data C2;
+	double TotErr;
     void SetPoints(const vector<Data>& p);		// function to set the Points
+	void Init();
+	double Dist(Data p1,Data p2);
 // Dialog Data
 	enum { IDD = IDD_GRAPH };
 
