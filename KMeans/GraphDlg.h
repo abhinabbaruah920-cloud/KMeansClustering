@@ -23,7 +23,7 @@ public:
 	Data C1;									// Cluster 1
 	Data C2;									// Cluster 2
 	double TotErr;								// Total Error
-    void SetPoints(const vector<Data>& p);		// function to set the Points
+    void Set(const vector<Data>& p);		// function to set the Points
 	void Init();								// initialize K Means
 	double Dist(Data p1,Data p2);				// Distance from clusters
 // Dialog Data

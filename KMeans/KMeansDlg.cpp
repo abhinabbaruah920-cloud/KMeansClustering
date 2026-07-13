@@ -195,7 +195,7 @@ void CKMeansDlg::OnBnClickedImport()
     }
 	fin.close();
 	
-	graph.SetPoints(points);				//setting points to the Graph
+	graph.Set(points);				//setting points to the Graph
 	graph.ShowWindow(SW_SHOW);				// showing the graph dialog window
 	graph.Invalidate();
 	graph.UpdateWindow();			
