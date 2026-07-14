@@ -23,9 +23,13 @@ public:
 	Data C1;									// Cluster 1
 	Data C2;									// Cluster 2
 	double TotErr;								// Total Error
-    void Set(const vector<Data>& p);		// function to set the Points
+    void Set(const vector<Data>& p);			// function to set the Points
 	void Init();								// initialize K Means
 	double Dist(Data p1,Data p2);				// Distance from clusters
+	virtual BOOL PreTranslateMessage(MSG* pMsg);	//relay message for tooltip
+
+	CToolTipCtrl tooltip;						// tooltip for hovering over points
+
 // Dialog Data
 	enum { IDD = IDD_GRAPH };
 
@@ -33,4 +37,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	virtual BOOL OnInitDialog();
 };

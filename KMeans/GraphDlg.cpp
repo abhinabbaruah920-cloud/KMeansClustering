@@ -20,7 +20,6 @@ IMPLEMENT_DYNAMIC(GraphDlg, CDialogEx)
 GraphDlg::GraphDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(GraphDlg::IDD, pParent)
 {
-
 }
 
 GraphDlg::~GraphDlg()
@@ -35,6 +34,7 @@ void GraphDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(GraphDlg, CDialogEx)
 	ON_WM_PAINT()
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 
@@ -67,7 +67,7 @@ void GraphDlg::OnPaint()
         CBrush rb(RGB(255,0,0));
 		CBrush gb(RGB(0,255,0));
 
-		if(points[i].cluster == 0){
+		if(points[i].cluster==0){
 			dc.SelectObject(&rb);
 		}else{
 			dc.SelectObject(&gb);}
@@ -90,7 +90,7 @@ void GraphDlg::Set(const vector<Data>& d){
 	Init();
 }
 
-double GraphDlg::Dist(Data p1, Data p2){
+double GraphDlg::Dist(Data p1,Data p2){
     double dx=p1.x-p2.x;
     double dy=p1.y-p2.y;
     return sqrt(dx*dx+dy*dy);
@@ -120,4 +120,55 @@ void GraphDlg::Init(){
     }
     Invalidate();
 	UpdateWindow();
+}
+
+
+
+BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)
+{
+    tooltip.RelayEvent(pMsg);
+    return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)
+{
+    const int SCALE=2;
+    CRect graph(10,10,900,680);
+    int cx=(graph.left+graph.right)/2;
+    int cy=(graph.top+graph.bottom)/2;
+    CString tip =_T("");
+    bool found=false;
+
+    for(int i=0;i<points.size();i++){
+        int x=cx+(int)(points[i].x*SCALE);
+        int y=cy-(int)(points[i].y*SCALE);
+        int dx=point.x-x;
+        int dy=point.y-y;
+
+        if(dx*dx+dy*dy<=50){
+            tip.Format(_T("(%.1f,%.1f)"),points[i].x,points[i].y);
+            found=true;
+            break;
+        }
+    }
+    if(found){
+        tooltip.UpdateTipText(tip,this);
+	}else{
+		tooltip.UpdateTipText(_T(""),this);
+	}
+
+	CDialogEx::OnMouseMove(nFlags, point);
+}
+
+
+BOOL GraphDlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	// TODO:  Add extra initialization here
+	tooltip.Create(this);
+    tooltip.AddTool(this,_T(""));
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
