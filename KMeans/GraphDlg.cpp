@@ -60,19 +60,18 @@ void GraphDlg::OnPaint()
     dc.LineTo(cx,graph.bottom);
 
     // drawing points
+	CBrush rb(RGB(255,0,0));
+	CBrush gb(RGB(0,255,0));
     for(int i=0;i<points.size();i++){
-      
 		int x=cx+(int)(points[i].x*SCALE);		
         int y=cy-(int)(points[i].y*SCALE);
-        CBrush rb(RGB(255,0,0));
-		CBrush gb(RGB(0,255,0));
 
 		if(points[i].cluster==0){			// red colour for the first cluster
 			dc.SelectObject(&rb);
 		}else{
 			dc.SelectObject(&gb);}			//green colour for the second cluster
 		dc.Ellipse(x-5,y-5,x+5,y+5);
-
+    }
 		int x1=cx+(int)(C1.x*SCALE);
 		int y1=cy-(int)(C1.y*SCALE);
 		int x2=cx+(int)(C2.x*SCALE);
@@ -81,8 +80,6 @@ void GraphDlg::OnPaint()
 		dc.Ellipse(x1-10,y1-10,x1+10,y1+10);		// cluster 1
 		dc.SelectObject(&gb);
 		dc.Ellipse(x2-10,y2-10,x2+10,y2+10);		// cluster 2
-
-    }
 }
 
 void GraphDlg::Set(const vector<Data>& d){
@@ -97,7 +94,6 @@ double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
 }
 
 void GraphDlg::Init(){								// initialize KMEANS algo
-	srand((unsigned)time(NULL));					// taking two random points as centroids
 	int r1=rand()%points.size();
 	int r2;
 	do{
@@ -122,7 +118,34 @@ void GraphDlg::Init(){								// initialize KMEANS algo
 	UpdateWindow();
 }
 
+void GraphDlg::Update(){						// update centroids
+    double sumx1=0,sumy1=0,sumx2=0,sumy2=0;
+    int count1=0,count2= 0;
+    for(int i=0;i<points.size();i++){
+        if(points[i].cluster == 0){
+            sumx1+=points[i].x;
+            sumy1+=points[i].y;
+            count1++;
+        }else{
+            sumx2+=points[i].x;
+            sumy2+=points[i].y;
+            count2++;
+        }
+    }
 
+    if(count1> 0){
+        C1.x=sumx1/count1;
+        C1.y=sumy1/count1;
+    }
+    if(count2>0){
+        C2.x=sumx2/count2;
+        C2.y=sumy2/count2;
+    }
+}
+
+bool GraphDlg::Assign(){}
+double GraphDlg::CalErr(){}
+void GraphDlg::run(){}
 
 BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)				// relay messages to tooltipCtrl
 {
@@ -166,9 +189,12 @@ BOOL GraphDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
+	srand((unsigned)time(NULL));					// taking two random points as centroids
 	tooltip.Create(this);
     tooltip.AddTool(this,_T(""));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
+
+

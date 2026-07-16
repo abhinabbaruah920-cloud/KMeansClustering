@@ -19,16 +19,19 @@ public:
 	GraphDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~GraphDlg();
 
-	vector<Data> points;						// declaring a vector for Data objects
-	Data C1;									// Cluster 1
-	Data C2;									// Cluster 2
-	double TotErr;								// Total Error
-    void Set(const vector<Data>& p);			// function to set the Points
-	void Init();								// initialize K Means
-	double Dist(Data p1,Data p2);				// Distance from clusters
-	virtual BOOL PreTranslateMessage(MSG* pMsg);	//relay message for tooltip
-
-	CToolTipCtrl tooltip;						// tooltip for hovering over points
+	vector<Data> points;							// Declaring a vector for Data objects
+	Data C1;										// Cluster 1
+	Data C2;										// Cluster 2
+	double TotErr;									// Total Error
+    void Set(const vector<Data>& p);				// function to set the Points
+	void Init();									// initialize K Means
+	double Dist(Data p1,Data p2);					// Distance from clusters
+	virtual BOOL PreTranslateMessage(MSG* pMsg);	// Relay message for tooltip
+	CToolTipCtrl tooltip;							// Tooltip for hovering over points
+	void run();										// run K means algo
+    void Update();									// update centroids
+    bool Assign();									// assign clusters after updating centroids
+    double CalErr();								// calculate error for convergence
 
 // Dialog Data
 	enum { IDD = IDD_GRAPH };

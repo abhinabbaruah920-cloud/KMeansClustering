@@ -50,9 +50,6 @@ END_MESSAGE_MAP()
 
 // CKMeansDlg dialog
 
-
-
-
 CKMeansDlg::CKMeansDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CKMeansDlg::IDD, pParent)
 {
@@ -69,6 +66,7 @@ BEGIN_MESSAGE_MAP(CKMeansDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_IMPORT, &CKMeansDlg::OnBnClickedImport)
+	ON_BN_CLICKED(IDC_BUTTON1, &CKMeansDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -195,8 +193,18 @@ void CKMeansDlg::OnBnClickedImport()
     }
 	fin.close();
 	
-	graph.Set(points);				//setting points to the Graph
+	graph.Set(points);						//setting points to the Graph
 	graph.ShowWindow(SW_SHOW);				// showing the graph dialog window
 	graph.Invalidate();
 	graph.UpdateWindow();			
+}
+
+
+void CKMeansDlg::OnBnClickedButton1()
+{
+    if(graph.points.empty()){
+        AfxMessageBox(_T("Select CSV file first"));
+        return;
+    }
+    graph.run();
 }
