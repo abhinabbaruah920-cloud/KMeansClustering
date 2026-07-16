@@ -67,10 +67,10 @@ void GraphDlg::OnPaint()
         CBrush rb(RGB(255,0,0));
 		CBrush gb(RGB(0,255,0));
 
-		if(points[i].cluster==0){
+		if(points[i].cluster==0){			// red colour for the first cluster
 			dc.SelectObject(&rb);
 		}else{
-			dc.SelectObject(&gb);}
+			dc.SelectObject(&gb);}			//green colour for the second cluster
 		dc.Ellipse(x-5,y-5,x+5,y+5);
 
 		int x1=cx+(int)(C1.x*SCALE);
@@ -78,26 +78,26 @@ void GraphDlg::OnPaint()
 		int x2=cx+(int)(C2.x*SCALE);
 		int y2=cy-(int)(C2.y*SCALE);
 		dc.SelectObject(&rb);
-		dc.Ellipse(x1-10,y1-10,x1+10,y1+10);
+		dc.Ellipse(x1-10,y1-10,x1+10,y1+10);		// cluster 1
 		dc.SelectObject(&gb);
-		dc.Ellipse(x2-10,y2-10,x2+10,y2+10);
+		dc.Ellipse(x2-10,y2-10,x2+10,y2+10);		// cluster 2
 
     }
 }
 
 void GraphDlg::Set(const vector<Data>& d){
-    points=d;
+    points=d;										// setting the points and initializing the KMEANS algo
 	Init();
 }
 
-double GraphDlg::Dist(Data p1,Data p2){
+double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
     double dx=p1.x-p2.x;
     double dy=p1.y-p2.y;
-    return sqrt(dx*dx+dy*dy);
+    return sqrt(dx*dx+dy*dy);				
 }
 
-void GraphDlg::Init(){
-	srand((unsigned)time(NULL));
+void GraphDlg::Init(){								// initialize KMEANS algo
+	srand((unsigned)time(NULL));					// taking two random points as centroids
 	int r1=rand()%points.size();
 	int r2;
 	do{
@@ -106,11 +106,11 @@ void GraphDlg::Init(){
 
     C1=points[r1];
     C2=points[r2];
-    TotErr=0;
+    TotErr=0;										// initializing total Error
     for(int i=0;i<points.size();i++){
         double d1=Dist(points[i],C1);
         double d2=Dist(points[i],C2);
-        if(d1<d2){
+        if(d1<d2){									// assigning the points to the centroids
             points[i].cluster=0;
             TotErr+=d1*d1;
         }else{
@@ -124,13 +124,13 @@ void GraphDlg::Init(){
 
 
 
-BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)
+BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)				// relay messages to tooltipCtrl
 {
     tooltip.RelayEvent(pMsg);
     return CDialogEx::PreTranslateMessage(pMsg);
 }
 
-void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)
+void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show points when hovering
 {
     const int SCALE=2;
     CRect graph(10,10,900,680);
@@ -146,7 +146,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)
         int dy=point.y-y;
 
         if(dx*dx+dy*dy<=50){
-            tip.Format(_T("(%.1f,%.1f)"),points[i].x,points[i].y);
+            tip.Format(_T("(%.1f,%.1f)"),points[i].x,points[i].y);		// showing the points till first decimal places
             found=true;
             break;
         }
