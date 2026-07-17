@@ -200,7 +200,7 @@ void CKMeansDlg::OnBnClickedImport()
 }
 
 
-void CKMeansDlg::OnBnClickedButton1()
+void CKMeansDlg::OnBnClickedButton1()		// start button for execution of K means clustering Algo
 {
     if(graph.points.empty()){
         AfxMessageBox(_T("Select CSV file first"));

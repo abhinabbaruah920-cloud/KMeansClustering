@@ -174,20 +174,20 @@ double GraphDlg::CalErr(){
     }
 	return err;
 }
-void GraphDlg::run(){
+void GraphDlg::run(){						// run function to start K means Clustering
     while(true){
-        double prevErr=TotErr;
-        Update();
+        double prevErr=TotErr;				// storing previous error
+        Update();							// Updating the centroids 
 		Invalidate();
         UpdateWindow();
 		Sleep(500);
-		Assign();
+		Assign();							// assigning the cluster to the updated centroids
 		Invalidate();
         UpdateWindow();
 		Sleep(500);
-        TotErr=CalErr();
+        TotErr=CalErr();					// calculating the new error and storing to the total error
 
-        if(fabs(prevErr-TotErr)<0.0001)
+        if(fabs(prevErr-TotErr)<0.0001)		// comparing the absolute error for convergence
             break;
     }
 }
