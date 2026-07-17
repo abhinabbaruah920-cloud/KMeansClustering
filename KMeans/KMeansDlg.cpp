@@ -182,11 +182,11 @@ void CKMeansDlg::OnBnClickedImport()
         stringstream ss(line);
         string xs;
         string ys;
-        if(!std::getline(ss,xs,','))		// taking x and assigning it to xs
+        if(!getline(ss,xs,','))		// taking x and assigning it to xs
             continue;
-        if(!std::getline(ss,ys))			// taking y and assigning it to xy
+        if(!getline(ss,ys))			// taking y and assigning it to xy
             continue;
-        Data d;
+        Data d;						// temp storage 
         d.x=stod(xs);						// stod: string to double for x
         d.y=stod(ys);						// stod for y
         points.push_back(d);				// appending to the vector

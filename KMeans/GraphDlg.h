@@ -5,7 +5,7 @@
 #include <vector>
 using namespace std;
 
-struct Data{				// declaring structure to hold values of x and y
+struct Data{		// declaring custom structure to hold values of x,y and clusters
     double x;
     double y;
 	int cluster;
