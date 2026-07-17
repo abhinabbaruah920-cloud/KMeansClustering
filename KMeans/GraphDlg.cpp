@@ -118,7 +118,7 @@ void GraphDlg::Init(){								// initialize KMEANS algo
 	UpdateWindow();
 }
 
-void GraphDlg::Update(){						// update centroids
+void GraphDlg::Update(){						// updating the centroids
     double sumx1=0,sumy1=0,sumx2=0,sumy2=0;
     int count1=0,count2= 0;
     for(int i=0;i<points.size();i++){
@@ -143,7 +143,7 @@ void GraphDlg::Update(){						// update centroids
     }
 }
 
-void GraphDlg::Assign(){
+void GraphDlg::Assign(){						// reassigning points to clusters
 
     for(int i=0;i<points.size();i++){
         double d1=Dist(points[i],C1);
@@ -161,7 +161,7 @@ void GraphDlg::Assign(){
     }
 
 }
-double GraphDlg::CalErr(){
+double GraphDlg::CalErr(){						// error calculation for convergence
     double err=0;
     for(int i=0;i< points.size();i++){
         if(points[i].cluster==0){
