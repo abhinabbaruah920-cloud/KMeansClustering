@@ -30,7 +30,7 @@ public:
 	CToolTipCtrl tooltip;							// Tooltip for hovering over points
 	void run();										// run K means algo
     void Update();									// update centroids
-    bool Assign();									// assign clusters after updating centroids
+    void Assign();									// assign clusters after updating centroids
     double CalErr();								// calculate error for convergence
 
 // Dialog Data

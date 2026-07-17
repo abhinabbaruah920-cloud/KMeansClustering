@@ -122,7 +122,7 @@ void GraphDlg::Update(){						// update centroids
     double sumx1=0,sumy1=0,sumx2=0,sumy2=0;
     int count1=0,count2= 0;
     for(int i=0;i<points.size();i++){
-        if(points[i].cluster == 0){
+        if(points[i].cluster==0){
             sumx1+=points[i].x;
             sumy1+=points[i].y;
             count1++;
@@ -133,19 +133,64 @@ void GraphDlg::Update(){						// update centroids
         }
     }
 
-    if(count1> 0){
+    if(count1> 0){								// Mean Calculation for centroid 1
         C1.x=sumx1/count1;
         C1.y=sumy1/count1;
     }
-    if(count2>0){
+    if(count2>0){								// Mean calculation for centroid 2
         C2.x=sumx2/count2;
         C2.y=sumy2/count2;
     }
 }
 
-bool GraphDlg::Assign(){}
-double GraphDlg::CalErr(){}
-void GraphDlg::run(){}
+void GraphDlg::Assign(){
+
+    for(int i=0;i<points.size();i++){
+        double d1=Dist(points[i],C1);
+        double d2=Dist(points[i],C2);
+        int newCluster;
+        if(d1<d2){
+            newCluster=0;
+		}else{
+            newCluster=1;
+		}
+        if(newCluster!=points[i].cluster){
+            points[i].cluster=newCluster;
+
+        }
+    }
+
+}
+double GraphDlg::CalErr(){
+    double err=0;
+    for(int i=0;i< points.size();i++){
+        if(points[i].cluster==0){
+            double d=Dist(points[i],C1);
+            err+=d*d;
+        }else{
+            double d=Dist(points[i],C2);
+            err+=d*d;
+        }
+    }
+	return err;
+}
+void GraphDlg::run(){
+    while(true){
+        double prevErr=TotErr;
+        Update();
+		Invalidate();
+        UpdateWindow();
+		Sleep(500);
+		Assign();
+		Invalidate();
+        UpdateWindow();
+		Sleep(500);
+        TotErr=CalErr();
+
+        if(fabs(prevErr-TotErr)<0.0001)
+            break;
+    }
+}
 
 BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)				// relay messages to tooltipCtrl
 {
