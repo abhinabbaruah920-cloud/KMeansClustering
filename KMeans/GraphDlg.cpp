@@ -38,6 +38,13 @@ BEGIN_MESSAGE_MAP(GraphDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
+void GraphDlg::processmsg(){
+	MSG msg;
+	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE)){		// Removing messages from Window Message Queue
+	DispatchMessage(&msg);
+	}
+}
+
 // GraphDlg message handlers
 
 void GraphDlg::OnPaint()
@@ -180,10 +187,12 @@ void GraphDlg::run(){						// run function to start K means Clustering
         Update();							// Updating the centroids 
 		Invalidate();
         UpdateWindow();
+		processmsg();
 		Sleep(500);
 		Assign();							// assigning the cluster to the updated centroids
 		Invalidate();
         UpdateWindow();
+		processmsg();
 		Sleep(500);
         TotErr=CalErr();					// calculating the new error and storing to the total error
 

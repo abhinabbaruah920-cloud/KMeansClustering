@@ -32,7 +32,7 @@ public:
     void Update();									// update centroids
     void Assign();									// assign clusters after updating centroids
     double CalErr();								// calculate error for convergence
-
+	void processmsg();
 // Dialog Data
 	enum { IDD = IDD_GRAPH };
 
