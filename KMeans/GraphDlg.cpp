@@ -19,7 +19,7 @@ IMPLEMENT_DYNAMIC(GraphDlg, CDialogEx)
 
 GraphDlg::GraphDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(GraphDlg::IDD, pParent)
-{
+{    
 }
 
 GraphDlg::~GraphDlg()
@@ -46,6 +46,7 @@ void GraphDlg::processmsg(){
 }
 
 // GraphDlg message handlers
+const int SCALE=2;		// defining the scale globally
 
 void GraphDlg::OnPaint()
 {
@@ -53,8 +54,6 @@ void GraphDlg::OnPaint()
     // graph area
     CRect graph(10,10,900,680);
     dc.Rectangle(graph);
-
-    const int SCALE=2;
 	int cx=(graph.left+graph.right)/2;
     int cy=(graph.top+graph.bottom)/2;
 
@@ -84,9 +83,9 @@ void GraphDlg::OnPaint()
 		int x2=cx+(int)(C2.x*SCALE);
 		int y2=cy-(int)(C2.y*SCALE);
 		dc.SelectObject(&rb);
-		dc.Ellipse(x1-10,y1-10,x1+10,y1+10);		// cluster 1
+		dc.Ellipse(x1-10,y1-10,x1+10,y1+10);		// centroid of cluster 1
 		dc.SelectObject(&gb);
-		dc.Ellipse(x2-10,y2-10,x2+10,y2+10);		// cluster 2
+		dc.Ellipse(x2-10,y2-10,x2+10,y2+10);		// centroid of cluster 2
 }
 
 void GraphDlg::Set(const vector<Data>& d){
@@ -209,7 +208,6 @@ BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)				// relay messages to tooltipCtr
 
 void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show points when hovering
 {
-    const int SCALE=2;
     CRect graph(10,10,900,680);
     int cx=(graph.left+graph.right)/2;
     int cy=(graph.top+graph.bottom)/2;
