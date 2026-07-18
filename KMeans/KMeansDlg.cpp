@@ -192,7 +192,10 @@ void CKMeansDlg::OnBnClickedImport()
         points.push_back(d);				// appending to the vector
     }
 	fin.close();
-	
+	graph.C1.x=0;
+	graph.C1.y=0;
+    graph.C2.x=0;
+	graph.C2.y=0;
 	graph.Set(points);						//setting points to the Graph
 	graph.ShowWindow(SW_SHOW);				// showing the graph dialog window
 	graph.Invalidate();

@@ -68,29 +68,42 @@ void GraphDlg::OnPaint()
     // drawing points
 	CBrush rb(RGB(255,0,0));
 	CBrush gb(RGB(0,255,0));
+	CBrush nb(RGB(255,255,255));
     for(int i=0;i<points.size();i++){
 		int x=cx+(int)(points[i].x*SCALE);		
         int y=cy-(int)(points[i].y*SCALE);
 
 		if(points[i].cluster==0){			// red colour for the first cluster
 			dc.SelectObject(&rb);
+		}else if(points[i].cluster==1){		//green colour for the second cluster
+			dc.SelectObject(&gb);
 		}else{
-			dc.SelectObject(&gb);}			//green colour for the second cluster
+			dc.SelectObject(&nb);			// normal colour 
+		}			
 		dc.Ellipse(x-5,y-5,x+5,y+5);
     }
+
 		int x1=cx+(int)(C1.x*SCALE);
 		int y1=cy-(int)(C1.y*SCALE);
 		int x2=cx+(int)(C2.x*SCALE);
 		int y2=cy-(int)(C2.y*SCALE);
+		
+		if(C1.x>0 || C2.y>0){
+			dc.SelectObject(&nb);
+			dc.Ellipse(x1-10,y1-10,x1+10,y1+10);
+			dc.Ellipse(x2-10,y2-10,x2+10,y2+10);
+		}
+		if(points[0].cluster>=0){
 		dc.SelectObject(&rb);
 		dc.Ellipse(x1-10,y1-10,x1+10,y1+10);		// centroid of cluster 1
 		dc.SelectObject(&gb);
 		dc.Ellipse(x2-10,y2-10,x2+10,y2+10);		// centroid of cluster 2
+	}
 }
+
 
 void GraphDlg::Set(const vector<Data>& d){
     points=d;										// setting the points and initializing the KMEANS algo
-	Init();
 }
 
 double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
@@ -108,11 +121,16 @@ void GraphDlg::Init(){								// initialize KMEANS algo
 
     C1=points[r1];
     C2=points[r2];
+	Invalidate();
+    UpdateWindow();
+    processmsg();
+    Sleep(500);
+
     TotErr=0;										// initializing total Error
     for(int i=0;i<points.size();i++){
         double d1=Dist(points[i],C1);
         double d2=Dist(points[i],C2);
-        if(d1<d2){									// assigning the points to the centroids
+        if(d1<d2){									// assigning the points to the clusters
             points[i].cluster=0;
             TotErr+=d1*d1;
         }else{
@@ -122,6 +140,7 @@ void GraphDlg::Init(){								// initialize KMEANS algo
     }
     Invalidate();
 	UpdateWindow();
+	Sleep(500);
 }
 
 void GraphDlg::Update(){						// updating the centroids
@@ -181,6 +200,9 @@ double GraphDlg::CalErr(){						// error calculation for convergence
 	return err;
 }
 void GraphDlg::run(){						// run function to start K means Clustering
+	Init();
+	Invalidate();
+	UpdateWindow();
     while(true){
         double prevErr=TotErr;				// storing previous error
         Update();							// Updating the centroids 
