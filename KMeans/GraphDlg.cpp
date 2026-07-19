@@ -235,7 +235,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show point
     int cy=(graph.top+graph.bottom)/2;
     CString tip =_T("");
     bool found=false;
-
+	// POINTS
     for(int i=0;i<points.size();i++){
         int x=cx+(int)(points[i].x*SCALE);
         int y=cy-(int)(points[i].y*SCALE);
@@ -243,11 +243,32 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show point
         int dy=point.y-y;
 
         if(dx*dx+dy*dy<=50){
-            tip.Format(_T("(%.1f,%.1f)"),points[i].x,points[i].y);		// showing the points till first decimal places
+            tip.Format(_T("(%.1f,%.1f)"),points[i].x,points[i].y);		// showing the points till first decimal place
             found=true;
             break;
         }
     }
+	// CENTROIDS
+	if(!found){															
+    int x1=cx+(int)(C1.x*SCALE);
+    int y1=cy-(int)(C1.y*SCALE);
+	int x2=cx+(int)(C2.x*SCALE);
+    int y2=cy-(int)(C2.y*SCALE);
+	int dx1=point.x-x1;
+    int dy1=point.y-y1;
+    int dx2=point.x-x2;
+    int dy2=point.y-y2;
+	
+	// showing the centroids till first decimal place
+    if(dx1*dx1+dy1*dy1<= 50){
+        tip.Format(_T("Centroid:(%.1f, %.1f)"),C1.x,C1.y);
+        found=true;
+    }
+    if(dx2*dx2+dy2*dy2<=50){
+        tip.Format(_T("Centroid: (%.1f, %.1f)"),C2.x,C2.y);
+        found=true;
+    }
+}
     if(found){
         tooltip.UpdateTipText(tip,this);
 	}else{
