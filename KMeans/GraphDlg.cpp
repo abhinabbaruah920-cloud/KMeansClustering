@@ -5,10 +5,6 @@
 #include "KMeans.h"
 #include "GraphDlg.h"
 #include "afxdialogex.h"
-// including file handling header files
-#include <fstream>
-#include <sstream>
-#include <string>
 // including math module
 #include <cmath>
 
@@ -113,6 +109,7 @@ double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
 }
 
 void GraphDlg::Init(){								// initialize KMEANS algo
+	//choosing random variables r1 and r2 (distinct)
 	int r1=rand()%points.size();
 	int r2;
 	do{
