@@ -84,7 +84,7 @@ void GraphDlg::OnPaint()
 		int x2=cx+(int)(C2.x*SCALE);
 		int y2=cy-(int)(C2.y*SCALE);
 		
-		if(C1.x>0 || C2.y>0){						// white colour for the centroids before updating it
+		if(C1.x>0 || C2.y>0){						// initial white colour for the centroids before updating it
 			dc.SelectObject(&nb);
 			dc.Ellipse(x1-10,y1-10,x1+10,y1+10);
 			dc.Ellipse(x2-10,y2-10,x2+10,y2+10);
@@ -98,7 +98,7 @@ void GraphDlg::OnPaint()
 }
 
 
-void GraphDlg::Set(const vector<Data>& d){			//temporary reference vector d
+void GraphDlg::Set(const vector<Data>& d){			// temporary reference vector d
     points=d;										// setting the points
 }
 
@@ -115,11 +115,11 @@ void GraphDlg::Init(){								// initialize KMEANS algo
 	do{
 		r2=rand()%points.size();
 	}while(r1== r2);
-
+	// assigning random points to C1 and C2
     C1=points[r1];
     C2=points[r2];
 	Invalidate();
-    UpdateWindow();
+    UpdateWindow();									// drawing initial centroids
     processmsg();
     Sleep(500);
 
@@ -136,7 +136,7 @@ void GraphDlg::Init(){								// initialize KMEANS algo
         }
     }
     Invalidate();
-	UpdateWindow();
+	UpdateWindow();						// drawing the initial cluster colours for initial centroids
 	Sleep(500);
 }
 
@@ -144,11 +144,11 @@ void GraphDlg::Update(){						// updating the centroids
     double sumx1=0,sumy1=0,sumx2=0,sumy2=0;
     int count1=0,count2= 0;
     for(int i=0;i<points.size();i++){
-        if(points[i].cluster==0){
+        if(points[i].cluster==0){		// summation of all x and y points of cluster 0
             sumx1+=points[i].x;
             sumy1+=points[i].y;
             count1++;
-        }else{
+        }else{							// summation of all x and y points of cluster 1
             sumx2+=points[i].x;
             sumy2+=points[i].y;
             count2++;
