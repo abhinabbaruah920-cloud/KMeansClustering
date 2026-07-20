@@ -68,7 +68,7 @@ void GraphDlg::OnPaint()
     // drawing points
 	CBrush rb(RGB(255,0,0));
 	CBrush gb(RGB(0,255,0));
-	CBrush nb(RGB(255,255,255));
+	CBrush nb(RGB(255,255,255));			// white color for the initial points
     for(int i=0;i<points.size();i++){
 		int x=cx+(int)(points[i].x*SCALE);		
         int y=cy-(int)(points[i].y*SCALE);
@@ -78,7 +78,7 @@ void GraphDlg::OnPaint()
 		}else if(points[i].cluster==1){		//green colour for the second cluster
 			dc.SelectObject(&gb);
 		}else{
-			dc.SelectObject(&nb);			// normal colour 
+			dc.SelectObject(&nb);			// white colour before starting
 		}			
 		dc.Ellipse(x-5,y-5,x+5,y+5);
     }
@@ -88,22 +88,22 @@ void GraphDlg::OnPaint()
 		int x2=cx+(int)(C2.x*SCALE);
 		int y2=cy-(int)(C2.y*SCALE);
 		
-		if(C1.x>0 || C2.y>0){
+		if(C1.x>0 || C2.y>0){						// white colour for the centroids before updating it
 			dc.SelectObject(&nb);
 			dc.Ellipse(x1-10,y1-10,x1+10,y1+10);
 			dc.Ellipse(x2-10,y2-10,x2+10,y2+10);
 		}
 		if(points[0].cluster>=0){
 		dc.SelectObject(&rb);
-		dc.Ellipse(x1-10,y1-10,x1+10,y1+10);		// centroid of cluster 1
+		dc.Ellipse(x1-10,y1-10,x1+10,y1+10);		// red colour for centroid of cluster 1
 		dc.SelectObject(&gb);
-		dc.Ellipse(x2-10,y2-10,x2+10,y2+10);		// centroid of cluster 2
+		dc.Ellipse(x2-10,y2-10,x2+10,y2+10);		// green colour for centroid of cluster 2
 	}
 }
 
 
-void GraphDlg::Set(const vector<Data>& d){
-    points=d;										// setting the points and initializing the KMEANS algo
+void GraphDlg::Set(const vector<Data>& d){			//temporary reference vector d
+    points=d;										// setting the points
 }
 
 double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
