@@ -171,12 +171,12 @@ void GraphDlg::Assign(){						// reassigning points to clusters
         double d1=Dist(points[i],C1);
         double d2=Dist(points[i],C2);
         int newCluster;
-        if(d1<d2){
+        if(d1<d2){								// checking which points are closer to which centroids
             newCluster=0;
 		}else{
             newCluster=1;
 		}
-        if(newCluster!=points[i].cluster){
+        if(newCluster!=points[i].cluster){			// updating the points
             points[i].cluster=newCluster;
 
         }
@@ -188,9 +188,9 @@ double GraphDlg::CalErr(){						// error calculation for convergence
     for(int i=0;i< points.size();i++){
         if(points[i].cluster==0){
             double d=Dist(points[i],C1);
-            err+=d*d;
+            err+=d*d;							// measuring the dist. between the point and C1 and adding it to err
         }else{
-            double d=Dist(points[i],C2);
+            double d=Dist(points[i],C2);		// measuring the dist. between the point and C2 and adding it to err
             err+=d*d;
         }
     }
@@ -214,7 +214,7 @@ void GraphDlg::run(){						// run function to start K means Clustering
 		Sleep(500);
         TotErr=CalErr();					// calculating the new error and storing to the total error
 
-        if(fabs(prevErr-TotErr)<0.0001)		// comparing the absolute error for convergence
+        if(fabs(prevErr-TotErr)<0.000001)		// comparing the absolute error for convergence
             break;
     }
 }
