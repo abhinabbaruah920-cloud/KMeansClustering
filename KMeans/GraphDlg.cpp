@@ -105,7 +105,7 @@ void GraphDlg::Set(const vector<Data>& d){			// temporary reference vector d
 double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
     double dx=p1.x-p2.x;
     double dy=p1.y-p2.y;
-    return sqrt(dx*dx+dy*dy);				
+    return sqrt(dx*dx+dy*dy);
 }
 
 void GraphDlg::Init(){								// initialize KMEANS algo
@@ -123,16 +123,16 @@ void GraphDlg::Init(){								// initialize KMEANS algo
     processmsg();
     Sleep(500);
 
-    TotErr=0;										// initializing total Error
+    newErr=0;										// initializing total Error
     for(int i=0;i<points.size();i++){
         double d1=Dist(points[i],C1);
         double d2=Dist(points[i],C2);
         if(d1<d2){									// assigning the points to the clusters
             points[i].cluster=0;
-            TotErr+=d1*d1;
+            newErr+=d1*d1;
         }else{
             points[i].cluster=1;
-            TotErr+=d2*d2;
+            newErr+=d2*d2;
         }
     }
     Invalidate();
@@ -196,12 +196,11 @@ double GraphDlg::CalErr(){						// error calculation for convergence
     }
 	return err;
 }
+
 void GraphDlg::run(){						// run function to start K means Clustering
 	Init();
-	Invalidate();
-	UpdateWindow();
     while(true){
-        double prevErr=TotErr;				// storing previous error
+        double prevErr=newErr;				// storing previous error
         Update();							// Updating the centroids 
 		Invalidate();
         UpdateWindow();
@@ -212,9 +211,9 @@ void GraphDlg::run(){						// run function to start K means Clustering
         UpdateWindow();
 		processmsg();
 		Sleep(500);
-        TotErr=CalErr();					// calculating the new error and storing to the total error
+        newErr=CalErr();					// calculating the new error and storing to the total error
 
-        if(fabs(prevErr-TotErr)<0.000001)		// comparing the absolute error for convergence
+        if(fabs(prevErr-newErr)<0.000001)		// comparing the absolute error for convergence
             break;
     }
 }
@@ -246,7 +245,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show point
         }
     }
 	// CENTROIDS
-	if(!found){															
+	if(!found){
     int x1=cx+(int)(C1.x*SCALE);
     int y1=cy-(int)(C1.y*SCALE);
 	int x2=cx+(int)(C2.x*SCALE);

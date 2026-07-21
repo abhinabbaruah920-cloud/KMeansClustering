@@ -22,7 +22,7 @@ public:
 	vector<Data> points;							// Declaring a vector for Data objects
 	Data C1;										// Cluster 1
 	Data C2;										// Cluster 2
-	double TotErr;									// Total Error
+	double newErr;									// Total Error
     void Set(const vector<Data>& p);				// function to set the Points
 	void Init();									// initialize K Means
 	double Dist(Data p1,Data p2);					// Distance from clusters
