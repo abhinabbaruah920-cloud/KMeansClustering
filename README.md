@@ -1,1 +1,2 @@
-# T1,T2 and T3 are sample files for testing
+# K-Means Clustering Visualization
+## T1,T2 and T3 are sample files for testing
