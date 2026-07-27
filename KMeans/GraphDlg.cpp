@@ -42,7 +42,7 @@ void GraphDlg::processmsg(){
 }
 
 // GraphDlg message handlers
-const int SCALE=2;		// defining the scale globally
+
 
 void GraphDlg::OnPaint()
 {
@@ -50,8 +50,43 @@ void GraphDlg::OnPaint()
     // graph area
     CRect graph(10,10,900,680);
     dc.Rectangle(graph);
+
+	double minx =points[0].x;
+	double maxx= points[0].x;
+	double miny= points[0].y;
+	double maxy= points[0].y;
+
+	for(int i= 1;i < points.size();i++){
+		if(points[i].x<minx){
+			minx=points[i].x;
+		}
+		if(points[i].x>maxx){
+			maxx=points[i].x;
+		}
+		if(points[i].y<miny){
+			miny=points[i].y;
+		}
+		if(points[i].y>maxy){
+			maxy=points[i].y;
+		}
+	}
+
+	double rx=maxx-minx;
+	double ry=maxy-miny;
+
+	if(rx == 0){
+		rx = 1;
+	}
+	if(ry == 0){
+		ry = 1;
+		}
+
+	double scaleX=(graph.Width()-40)/rx;
+	double scaleY=(graph.Height()-40)/ry;
+
+	SCALE =min(scaleX,scaleY);
 	int cx=(graph.left+graph.right)/2;
-    int cy=(graph.top+graph.bottom)/2;
+	int cy=(graph.top+graph.bottom)/2;
 
 	// x axis
     dc.MoveTo(graph.left,cy);
@@ -213,7 +248,7 @@ void GraphDlg::run(){						// run function to start K means Clustering
 		Sleep(500);
         newErr=CalErr();					// calculating the new error and storing to the total error
 
-        if(fabs(prevErr-newErr)<0.000001)		// comparing the absolute error for convergence
+        if(fabs(prevErr-newErr)<0.001)		// comparing the absolute error for convergence
             break;
     }
 }
