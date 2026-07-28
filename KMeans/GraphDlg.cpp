@@ -147,35 +147,46 @@ double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
 }
 
 void GraphDlg::Init(){								// initialize KMEANS algo
-	//choosing random variables r1 and r2 (distinct)
-	int r1=rand()%points.size();
-	int r2;
-	do{
-		r2=rand()%points.size();
-	}while(r1== r2);
-	// assigning random points to C1 and C2
-    C1=points[r1];
-    C2=points[r2];
-	Invalidate();
-    UpdateWindow();									// drawing initial centroids
+	// choosing random centroids(distinct)
+    centroids.clear();
+    while(centroids.size() < k){
+        int r=rand()%points.size();
+        bool exist=false;
+        for(int i=0;i < centroids.size();i++){
+            if(centroids[i].x==points[r].x && centroids[i].y==points[r].y){
+                exist=true;
+                break;
+            }
+        }
+        if(!exist){
+            centroids.push_back(points[r]);
+		}
+    }
+    Invalidate();
+    UpdateWindow();
     processmsg();
     Sleep(500);
 
-    newErr=0;										// initializing total Error
-    for(int i=0;i<points.size();i++){
-        double d1=Dist(points[i],C1);
-        double d2=Dist(points[i],C2);
-        if(d1<d2){									// assigning the points to the clusters
-            points[i].cluster=0;
-            newErr+=d1*d1;
-        }else{
-            points[i].cluster=1;
-            newErr+=d2*d2;
+    // Assign every point to the nearest centroid
+    newErr=0;
+    for(int i=0;i < points.size();i++){
+        double nearest= Dist(points[i],centroids[0]);		//shortest distance from point to centroid
+        int cluster=0;
+        for(int j=1;j < k;j++){
+            double d =Dist(points[i],centroids[j]);
+            if(d<nearest){
+                nearest= d;
+                cluster=j;
+            }
         }
+
+        points[i].cluster =cluster;
+        newErr+=nearest*nearest;
     }
     Invalidate();
-	UpdateWindow();						// drawing the initial cluster colours for initial centroids
-	Sleep(500);
+    UpdateWindow();
+    processmsg();
+    Sleep(500);
 }
 
 void GraphDlg::Update(){						// updating the centroids
