@@ -18,10 +18,9 @@ class GraphDlg : public CDialogEx
 public:
 	GraphDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~GraphDlg();
-
+	int k;
 	vector<Data> points;							// Declaring a vector for Data objects
-	Data C1;										// Cluster 1
-	Data C2;										// Cluster 2
+	vector<Data> centroids;
 	double newErr;									// Total Error
     void Set(const vector<Data>& p);				// function to set the Points
 	void Init();									// initialize K Means

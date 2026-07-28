@@ -4,6 +4,7 @@
 
 #pragma once
 #include "GraphDlg.h"
+#include "afxwin.h"
 // CKMeansDlg dialog
 class CKMeansDlg : public CDialogEx
 {
@@ -11,7 +12,6 @@ class CKMeansDlg : public CDialogEx
 public:
 	CKMeansDlg(CWnd* pParent = NULL);	// standard constructor
 	GraphDlg graph;						// Creating obj of GraphDlg box
-
 
 // Dialog Data
 	enum { IDD = IDD_KMEANS_DIALOG };
@@ -33,4 +33,5 @@ protected:
 public:
 	afx_msg void OnBnClickedImport();
 	afx_msg void OnBnClickedButton1();
+	CComboBox ck;
 };
