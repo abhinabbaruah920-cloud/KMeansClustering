@@ -47,89 +47,92 @@ void GraphDlg::processmsg(){
 void GraphDlg::OnPaint()
 {
     CPaintDC dc(this);
-    // graph area
+    //main graph border
     CRect graph(10,10,900,680);
     dc.Rectangle(graph);
-
-	double minx =points[0].x;
-	double maxx= points[0].x;
-	double miny= points[0].y;
-	double maxy= points[0].y;
-
-	for(int i= 1;i < points.size();i++){
-		if(points[i].x<minx){
-			minx=points[i].x;
-		}
-		if(points[i].x>maxx){
-			maxx=points[i].x;
-		}
-		if(points[i].y<miny){
-			miny=points[i].y;
-		}
-		if(points[i].y>maxy){
-			maxy=points[i].y;
-		}
-	}
-
-	double rx=maxx-minx;
-	double ry=maxy-miny;
-
-	if(rx == 0){
-		rx = 1;
-	}
-	if(ry == 0){
-		ry = 1;
-		}
-
-	double scaleX=(graph.Width()-40)/rx;
-	double scaleY=(graph.Height()-40)/ry;
-
-	SCALE =min(scaleX,scaleY);
-	int cx=(graph.left+graph.right)/2;
-	int cy=(graph.top+graph.bottom)/2;
-
-	// x axis
+    int cx=(graph.left+graph.right)/2;
+    int cy=(graph.top+graph.bottom)/2;
+    // x axis
     dc.MoveTo(graph.left,cy);
     dc.LineTo(graph.right,cy);
-
     // y axis
     dc.MoveTo(cx,graph.top);
     dc.LineTo(cx,graph.bottom);
 
-    // drawing points
-	CBrush rb(RGB(255,0,0));
-	CBrush gb(RGB(0,255,0));
-	CBrush nb(RGB(255,255,255));			// white color for the initial points
+    // maximum absolute distance from (0,0) among all points and centroids
+    double mAbx=0;
+    double mAby=0;
+    // Check points
     for(int i=0;i<points.size();i++){
-		int x=cx+(int)(points[i].x*SCALE);		
-        int y=cy-(int)(points[i].y*SCALE);
-
-		if(points[i].cluster==0){			// red colour for the first cluster
-			dc.SelectObject(&rb);
-		}else if(points[i].cluster==1){		//green colour for the second cluster
-			dc.SelectObject(&gb);
-		}else{
-			dc.SelectObject(&nb);			// white colour before starting
-		}			
-		dc.Ellipse(x-5,y-5,x+5,y+5);
+        if(fabs(points[i].x)>mAbx){
+			mAbx=fabs(points[i].x);
+		}
+        if(fabs(points[i].y)>mAby){
+			mAby=fabs(points[i].y);
+		}
     }
 
-		int x1=cx+(int)(C1.x*SCALE);
-		int y1=cy-(int)(C1.y*SCALE);
-		int x2=cx+(int)(C2.x*SCALE);
-		int y2=cy-(int)(C2.y*SCALE);
-		
-		if(C1.x>0 || C2.y>0){						// initial white colour for the centroids before updating it
-			dc.SelectObject(&nb);
-			dc.Ellipse(x1-10,y1-10,x1+10,y1+10);
-			dc.Ellipse(x2-10,y2-10,x2+10,y2+10);
+    // checking centroids to keep them on screen
+    for(int i=0;i< centroids.size();i++){
+        if(fabs(centroids[i].x)>mAbx){
+			mAbx= fabs(centroids[i].x);
 		}
-		if(points[0].cluster>=0){
-		dc.SelectObject(&rb);
-		dc.Ellipse(x1-10,y1-10,x1+10,y1+10);		// red colour for centroid of cluster 1
-		dc.SelectObject(&gb);
-		dc.Ellipse(x2-10,y2-10,x2+10,y2+10);		// green colour for centroid of cluster 2
+        if(fabs(centroids[i].y)>mAby){
+			mAby=fabs(centroids[i].y);
+		}
+    }
+
+    // preventing division by zero
+    if(mAbx== 0){
+		mAbx=1;
 	}
+    if(mAby==0){
+		mAby= 1;
+	}
+	//calculating the scale
+    int pad=30;
+    double scaleX=((graph.Width()/2.0) - pad)/ mAbx;
+    double scaleY=((graph.Height()/2.0) - pad)/ mAby;
+    SCALE =min(scaleX,scaleY);
+
+    // brush initialization
+    CBrush b[5];
+    b[0].CreateSolidBrush(RGB(255,0,0));      // Red color
+    b[1].CreateSolidBrush(RGB(0,255,0));      // Green colour
+    b[2].CreateSolidBrush(RGB(0,0,255));      // Blue colour
+    b[3].CreateSolidBrush(RGB(255,255,0));    // Yellow colour
+    b[4].CreateSolidBrush(RGB(0,255,255));    // Cyan colour
+    CBrush nb(RGB(255,255,255));              // White colour when importing
+
+    for(int i=0;i < points.size();i++){		// drawing the points
+        int x=cx+ (int)(points[i].x* SCALE);
+        int y=cy- (int)(points[i].y* SCALE);
+        
+        if(points[i].cluster>=0 && points[i].cluster<k){
+            dc.SelectObject(&b[points[i].cluster]);				// colouring the points based on clusters
+        }else{
+            dc.SelectObject(&nb); //initital color of points
+        }
+        dc.Ellipse(x-5,y-5,x+5,y+5);
+    }
+
+    if(!points.empty()){						// drawing the centroids
+        if(points[0].cluster<0){
+            dc.SelectObject(&nb);						//initial colour
+            for(int i=0;i < centroids.size();i++){
+                int x=cx+ (int)(centroids[i].x* SCALE);
+                int y=cy- (int)(centroids[i].y* SCALE);
+                dc.Ellipse(x-10,y-10,x+10,y+10);
+            }
+        }else{
+            for(int i=0;i<k && i<(int)centroids.size();i++){
+                dc.SelectObject(&b[i]);							//colouring the centroids 
+                int x=cx+ (int)(centroids[i].x* SCALE);
+                int y=cy- (int)(centroids[i].y* SCALE);
+                dc.Ellipse(x-10,y-10,x+10,y+10);
+            }
+        }
+    }
 }
 
 

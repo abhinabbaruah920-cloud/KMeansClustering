@@ -59,6 +59,7 @@ CKMeansDlg::CKMeansDlg(CWnd* pParent /*=NULL*/)
 void CKMeansDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX,IDC_COMBO_K,ck);
 }
 
 BEGIN_MESSAGE_MAP(CKMeansDlg, CDialogEx)
@@ -77,7 +78,12 @@ BOOL CKMeansDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// Add "About..." menu item to system menu.
-
+	//combobox contents
+	ck.AddString(_T("2"));
+    ck.AddString(_T("3"));
+    ck.AddString(_T("4"));
+    ck.AddString(_T("5"));
+    ck.SetCurSel(0);      // Default = 2
 	graph.Create(IDD_GRAPH,this);		// Creating the Dlg box
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -192,10 +198,7 @@ void CKMeansDlg::OnBnClickedImport()
         points.push_back(d);				// appending to the vector
     }
 	fin.close();
-	graph.C1.x=0;
-	graph.C1.y=0;
-    graph.C2.x=0;
-	graph.C2.y=0;
+	graph.centroids.clear();			// clearing previous centroids when importing again
 	graph.Set(points);						//setting points to the Graph
 	graph.ShowWindow(SW_SHOW);				// showing the graph dialog window
 	graph.Invalidate();
@@ -209,5 +212,6 @@ void CKMeansDlg::OnBnClickedButton1()		// start button for execution of K means 
         AfxMessageBox(_T("Select CSV file first"));
         return;
     }
+	graph.k=ck.GetCurSel()+2;
     graph.run();
 }
