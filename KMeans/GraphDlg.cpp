@@ -148,18 +148,18 @@ double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
 
 void GraphDlg::Init(){								// initialize KMEANS algo
 	// choosing random centroids(distinct)
-    centroids.clear();
+    centroids.clear();								// clearing previous centroids
     while(centroids.size() < k){
-        int r=rand()%points.size();
+        int r=rand()%points.size();					//random number picking
         bool exist=false;
-        for(int i=0;i < centroids.size();i++){
+        for(int i=0;i < centroids.size();i++){			// unique random number
             if(centroids[i].x==points[r].x && centroids[i].y==points[r].y){
                 exist=true;
                 break;
             }
         }
         if(!exist){
-            centroids.push_back(points[r]);
+            centroids.push_back(points[r]);			// adding unique rand number
 		}
     }
     Invalidate();
@@ -168,20 +168,18 @@ void GraphDlg::Init(){								// initialize KMEANS algo
     Sleep(500);
 
     // Assign every point to the nearest centroid
-    newErr=0;
     for(int i=0;i < points.size();i++){
         double nearest= Dist(points[i],centroids[0]);		//shortest distance from point to centroid
-        int cluster=0;
+        int cluster=0;										// index of closest centroid
+		// calculating closest centroids
         for(int j=1;j < k;j++){
-            double d =Dist(points[i],centroids[j]);
+            double d =Dist(points[i],centroids[j]);		
             if(d<nearest){
-                nearest= d;
-                cluster=j;
+                nearest= d;				// updating closest distance
+                cluster=j;				// updating the index to this closer centroid
             }
         }
-
-        points[i].cluster =cluster;
-        newErr+=nearest*nearest;
+        points[i].cluster =cluster;		//savign the final cluster assignment
     }
     Invalidate();
     UpdateWindow();
@@ -286,26 +284,17 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show point
         }
     }
 	// CENTROIDS
-	if(!found){
-    int x1=cx+(int)(C1.x*SCALE);
-    int y1=cy-(int)(C1.y*SCALE);
-	int x2=cx+(int)(C2.x*SCALE);
-    int y2=cy-(int)(C2.y*SCALE);
-	int dx1=point.x-x1;
-    int dy1=point.y-y1;
-    int dx2=point.x-x2;
-    int dy2=point.y-y2;
-	
-	// showing the centroids till first decimal place
-    if(dx1*dx1+dy1*dy1<= 50){
-        tip.Format(_T("Centroid:(%.1f, %.1f)"),C1.x,C1.y);
-        found=true;
-    }
-    if(dx2*dx2+dy2*dy2<=50){
-        tip.Format(_T("Centroid: (%.1f, %.1f)"),C2.x,C2.y);
-        found=true;
-    }
-}
+	for(int i=0;i<(int)centroids.size();i++){
+		int x=cx+ centroids[i].x* SCALE;
+		int y=cy- centroids[i].y* SCALE;
+		int dx=point.x-x;
+		int dy=point.y-y;
+		if(dx*dx+dy*dy<= 50){
+			tip.Format(_T("Centroid %d: (%.1f, %.1f)"),i+1,centroids[i].x,centroids[i].y);
+			found=true;
+			break;
+		}
+	}
     if(found){
         tooltip.UpdateTipText(tip,this);
 	}else{
