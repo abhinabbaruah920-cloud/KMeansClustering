@@ -190,59 +190,51 @@ void GraphDlg::Init(){								// initialize KMEANS algo
 }
 
 void GraphDlg::Update(){						// updating the centroids
-    double sumx1=0,sumy1=0,sumx2=0,sumy2=0;
-    int count1=0,count2= 0;
-    for(int i=0;i<points.size();i++){
-        if(points[i].cluster==0){		// summation of all x and y points of cluster 0
-            sumx1+=points[i].x;
-            sumy1+=points[i].y;
-            count1++;
-        }else{							// summation of all x and y points of cluster 1
-            sumx2+=points[i].x;
-            sumy2+=points[i].y;
-            count2++;
-        }
-    }
-
-    if(count1> 0){								// Mean Calculation for centroid 1
-        C1.x=sumx1/count1;
-        C1.y=sumy1/count1;
-    }
-    if(count2>0){								// Mean calculation for centroid 2
-        C2.x=sumx2/count2;
-        C2.y=sumy2/count2;
-    }
+	vector<double> sumx(k,0);
+	vector<double> sumy(k,0);
+	vector<int> count(k,0);
+	for(int i=0;i<points.size();i++){
+		int c=points[i].cluster;
+		if(c<0 || c>=k){
+			continue;
+		}
+	sumx[c]+=points[i].x;
+	sumy[c]+=points[i].y;
+	count[c]++;
+	}
+	for(int i=0;i<k;i++){
+		if(count[i]> 0){
+			centroids[i].x= sumx[i]/count[i];
+			centroids[i].y= sumy[i]/count[i];
+		}
+	}
 }
 
 void GraphDlg::Assign(){						// reassigning points to clusters
-
-    for(int i=0;i<points.size();i++){
-        double d1=Dist(points[i],C1);
-        double d2=Dist(points[i],C2);
-        int newCluster;
-        if(d1<d2){								// checking which points are closer to which centroids
-            newCluster=0;
-		}else{
-            newCluster=1;
+	if(centroids.empty()){
+		return;
+	}
+	for(int i=0;i<points.size();i++){
+		double nearest= Dist(points[i],centroids[0]);
+		int cluster=0;
+		for(int j=1;j < k;j++){
+			double d=Dist(points[i],centroids[j]);
+			if(d<nearest){
+				nearest= d;
+				cluster=j;
+			}
 		}
-        if(newCluster!=points[i].cluster){			// updating the points
-            points[i].cluster=newCluster;
 
-        }
-    }
+		points[i].cluster =cluster;
+	}
 
 }
 double GraphDlg::CalErr(){						// error calculation for convergence
-    double err=0;
-    for(int i=0;i< points.size();i++){
-        if(points[i].cluster==0){
-            double d=Dist(points[i],C1);
-            err+=d*d;							// measuring the dist. between the point and C1 and adding it to err
-        }else{
-            double d=Dist(points[i],C2);		// measuring the dist. between the point and C2 and adding it to err
-            err+=d*d;
-        }
-    }
+	double err=0;
+	for(int i=0;i<points.size();i++){
+		double d= Dist(points[i],centroids[points[i].cluster]);
+		err+=d*d;
+	}
 	return err;
 }
 
