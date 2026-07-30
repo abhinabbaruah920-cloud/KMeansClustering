@@ -198,6 +198,12 @@ void CKMeansDlg::OnBnClickedImport()
         points.push_back(d);				// appending to the vector
     }
 	fin.close();
+
+	if(graph.running){
+		AfxMessageBox(_T("Wait till KMeans finishes!!!"));
+		return;
+	}
+
 	graph.centroids.clear();			// clearing previous centroids when importing again
 	graph.Set(points);						//setting points to the Graph
 	graph.ShowWindow(SW_SHOW);				// showing the graph dialog window

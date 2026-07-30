@@ -15,7 +15,8 @@ IMPLEMENT_DYNAMIC(GraphDlg, CDialogEx)
 
 GraphDlg::GraphDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(GraphDlg::IDD, pParent)
-{    
+{
+	running=false;
 }
 
 GraphDlg::~GraphDlg()
@@ -154,7 +155,7 @@ void GraphDlg::Init(){								// initialize KMEANS algo
         bool exist=false;
         for(int i=0;i < centroids.size();i++){			// unique random number
             if(centroids[i].x==points[r].x && centroids[i].y==points[r].y){
-                exist=true;
+                exist=true;															// bool flag if exists
                 break;
             }
         }
@@ -179,7 +180,7 @@ void GraphDlg::Init(){								// initialize KMEANS algo
                 cluster=j;				// updating the index to this closer centroid
             }
         }
-        points[i].cluster =cluster;		//savign the final cluster assignment
+        points[i].cluster =cluster;		//saving the final cluster assignment
     }
     Invalidate();
     UpdateWindow();
@@ -193,9 +194,6 @@ void GraphDlg::Update(){						// updating the centroids
 	vector<int> count(k,0);
 	for(int i=0;i<points.size();i++){
 		int c=points[i].cluster;
-		if(c<0 || c>=k){
-			continue;
-		}
 	sumx[c]+=points[i].x;
 	sumy[c]+=points[i].y;
 	count[c]++;
@@ -237,7 +235,10 @@ double GraphDlg::CalErr(){						// error calculation for convergence
 }
 
 void GraphDlg::run(){						// run function to start K means Clustering
+	running=true;
+	
 	Init();
+	newErr=CalErr();
     while(true){
         double prevErr=newErr;				// storing previous error
         Update();							// Updating the centroids 
@@ -245,6 +246,7 @@ void GraphDlg::run(){						// run function to start K means Clustering
         UpdateWindow();
 		processmsg();
 		Sleep(500);
+
 		Assign();							// assigning the cluster to the updated centroids
 		Invalidate();
         UpdateWindow();
@@ -255,6 +257,7 @@ void GraphDlg::run(){						// run function to start K means Clustering
         if(fabs(prevErr-newErr)<0.001)		// comparing the absolute error for convergence
             break;
     }
+	running=false;
 }
 
 BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)				// relay messages to tooltipCtrl

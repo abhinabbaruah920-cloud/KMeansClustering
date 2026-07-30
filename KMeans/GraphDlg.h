@@ -33,6 +33,7 @@ public:
     double CalErr();								// calculate error for convergence
 	void processmsg();
 	double SCALE;		// defining the scale globally
+	bool running;
 // Dialog Data
 	enum { IDD = IDD_GRAPH };
 
