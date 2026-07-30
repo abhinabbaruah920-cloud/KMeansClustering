@@ -296,7 +296,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show point
 		int dx=point.x-x;
 		int dy=point.y-y;
 		if(dx*dx+dy*dy<= 50){
-			tip.Format(_T("Centroid %d: (%.1f, %.1f)"),i+1,centroids[i].x,centroids[i].y); // Showing the centroids till first decimal place
+			tip.Format(_T("Centroid %d: (%.2f, %.2f)"),i+1,centroids[i].x,centroids[i].y); // Showing the centroids till second decimal place
 			found=true;
 			break;
 		}

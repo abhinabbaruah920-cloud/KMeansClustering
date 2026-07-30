@@ -79,10 +79,10 @@ BOOL CKMeansDlg::OnInitDialog()
 
 	// Add "About..." menu item to system menu.
 	//combobox contents
-	ck.AddString(_T("2"));
-    ck.AddString(_T("3"));
-    ck.AddString(_T("4"));
-    ck.AddString(_T("5"));
+	ck.AddString(_T("K = 2"));
+    ck.AddString(_T("K = 3"));
+    ck.AddString(_T("K = 4"));
+    ck.AddString(_T("K = 5"));
     ck.SetCurSel(0);      // Default = 2
 	graph.Create(IDD_GRAPH,this);		// Creating the Dlg box
 
