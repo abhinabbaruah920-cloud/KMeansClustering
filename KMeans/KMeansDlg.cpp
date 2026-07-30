@@ -78,6 +78,8 @@ BOOL CKMeansDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// Add "About..." menu item to system menu.
+	SetWindowPos(NULL,170,250,0,0,SWP_NOSIZE|SWP_NOZORDER);
+
 	//combobox contents
 	ck.AddString(_T("K = 2"));
     ck.AddString(_T("K = 3"));
@@ -207,6 +209,7 @@ void CKMeansDlg::OnBnClickedImport()
 	graph.centroids.clear();			// clearing previous centroids when importing again
 	graph.Set(points);						//setting points to the Graph
 	graph.ShowWindow(SW_SHOW);				// showing the graph dialog window
+	graph.SetWindowPos(NULL,700,250,0,0,SWP_NOSIZE|SWP_NOZORDER);
 	graph.Invalidate();
 	graph.UpdateWindow();			
 }
@@ -218,6 +221,9 @@ void CKMeansDlg::OnBnClickedButton1()		// start button for execution of K means 
         AfxMessageBox(_T("Select CSV file first"));
         return;
     }
+	if(graph.running){
+		return;
+	}
 	graph.k=ck.GetCurSel()+2;
     graph.run();
 }

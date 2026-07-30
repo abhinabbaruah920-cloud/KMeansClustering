@@ -51,29 +51,38 @@ void GraphDlg::OnPaint()
     //main graph border
     CRect graph(10,10,900,680);
     dc.Rectangle(graph);
-    int cx=(graph.left+graph.right)/2;		// Origin calculation
-    int cy=(graph.top+graph.bottom)/2;
-    // drawing x axis
-    dc.MoveTo(graph.left,cy);
-    dc.LineTo(graph.right,cy);
-    // Drawing y axis
-    dc.MoveTo(cx,graph.top);
-    dc.LineTo(cx,graph.bottom);
 
     // maximum absolute distance from (0,0) among all points and centroids
     double mAbx=0;
     double mAby=0;
-    // Check max absolute points
-    for(int i=0;i<points.size();i++){
-        if(fabs(points[i].x)>mAbx){
+
+	double minx= points[0].x;
+    double maxx= points[0].x;
+    double miny= points[0].y;
+    double maxy= points[0].y;
+
+	for(int i=0;i<points.size();i++){
+		if(fabs(points[i].x)>mAbx){
 			mAbx=fabs(points[i].x);
 		}
-        if(fabs(points[i].y)>mAby){
+		if(fabs(points[i].y)>mAby){
 			mAby=fabs(points[i].y);
 		}
-    }
+		if(points[i].x<minx){
+			minx=points[i].x;
+		}
+		if(points[i].x>maxx){
+			maxx=points[i].x;
+		}
+		if(points[i].y<miny){
+			miny=points[i].y;
+		}
+		if(points[i].y>maxy){
+			maxy=points[i].y;
+		}
+	}
 
-    // checking centroids to keep them on screen
+    // Checking centroids to keep them on screen
     for(int i=0;i< centroids.size();i++){
         if(fabs(centroids[i].x)>mAbx){
 			mAbx= fabs(centroids[i].x);
@@ -83,18 +92,31 @@ void GraphDlg::OnPaint()
 		}
     }
 
-    // preventing division by zero
+    // Preventing division by zero
     if(mAbx== 0){
 		mAbx=1;
 	}
     if(mAby==0){
 		mAby= 1;
 	}
-	//calculating the scale
+	// Calculating scale
     int pad=30;
-    double scaleX=((graph.Width()/2.0) - pad)/ mAbx;
-    double scaleY=((graph.Height()/2.0) - pad)/ mAby;
-    SCALE =min(scaleX,scaleY);
+    double scalx=((graph.Width()/2.0)-pad)/mAbx;
+    double scaly=((graph.Height()/2.0)-pad)/mAby;
+    SCALE =min(scalx,scaly);
+
+	double cenx=(minx + maxx)/2.0;
+	double ceny=(miny + maxy)/2.0;
+
+	int cx=graph.CenterPoint().x- (int)(cenx* SCALE);
+	int cy= graph.CenterPoint().y+ (int)(ceny* SCALE);
+
+    // drawing x axis
+    dc.MoveTo(graph.left,cy);
+    dc.LineTo(graph.right,cy);
+    // Drawing y axis
+    dc.MoveTo(cx,graph.top);
+    dc.LineTo(cx,graph.bottom);
 
     // brush initialization
     CBrush b[5];
@@ -109,7 +131,7 @@ void GraphDlg::OnPaint()
         int x=cx+ (int)(points[i].x* SCALE);
         int y=cy- (int)(points[i].y* SCALE);
         
-        if(points[i].cluster>=0 && points[i].cluster<k){
+        if(points[i].cluster>=0){
             dc.SelectObject(&b[points[i].cluster]);				// colouring the points based on clusters
         }else{
             dc.SelectObject(&nb);							// Initial color of points
@@ -117,23 +139,23 @@ void GraphDlg::OnPaint()
         dc.Ellipse(x-5,y-5,x+5,y+5);
     }
 
-    if(!points.empty()){						// drawing the centroids
-        if(points[0].cluster<0){
-            dc.SelectObject(&nb);						// Initial colour
-            for(int i=0;i < centroids.size();i++){
-                int x=cx+ (int)(centroids[i].x* SCALE);
-                int y=cy- (int)(centroids[i].y* SCALE);
-                dc.Ellipse(x-10,y-10,x+10,y+10);
-            }
-        }else{
-            for(int i=0;i<k && i<(int)centroids.size();i++){
-                dc.SelectObject(&b[i]);							// colouring the centroids 
-                int x=cx+ (int)(centroids[i].x* SCALE);
-                int y=cy- (int)(centroids[i].y* SCALE);
-                dc.Ellipse(x-10,y-10,x+10,y+10);
-            }
-        }
-    }
+    if(!points.empty()){
+		if(points[0].cluster<0){						// drawing the centroids
+			dc.SelectObject(&nb);						// Initial colour
+			 for(int i=0;i < centroids.size();i++){
+				int x=cx+ (int)(centroids[i].x* SCALE);
+				int y=cy- (int)(centroids[i].y* SCALE);
+				dc.Ellipse(x-10,y-10,x+10,y+10);
+			 }
+		}else{
+			for(int i=0;i<k && i<(int)centroids.size();i++){
+				dc.SelectObject(&b[i]);							// colouring the centroids 
+				int x=cx+ (int)(centroids[i].x* SCALE);
+				int y=cy- (int)(centroids[i].y* SCALE);
+				dc.Ellipse(x-10,y-10,x+10,y+10);
+			   }
+		 }
+	}
 }
 
 
@@ -149,13 +171,13 @@ double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
 
 void GraphDlg::Init(){								// initialize KMEANS algo
 	// choosing random centroids(distinct)
-    centroids.clear();								// clearing previous centroids
+    centroids.clear();
     while(centroids.size() < k){
         int r=rand()%points.size();					//random number picking
         bool exist=false;
         for(int i=0;i < centroids.size();i++){			// unique random number
             if(centroids[i].x==points[r].x && centroids[i].y==points[r].y){
-                exist=true;															// bool flag if exists
+                exist=true;											// bool flag if exists
                 break;
             }
         }
@@ -269,12 +291,74 @@ BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)				// relay messages to tooltipCtr
 
 void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show points when hovering
 {
+	if(points.empty()){
+        CDialogEx::OnMouseMove(nFlags, point);
+        return;
+    }
+	    
+	// Same as OnPaint()
     CRect graph(10,10,900,680);
-    int cx=(graph.left+graph.right)/2;
-    int cy=(graph.top+graph.bottom)/2;
-    CString tip =_T("");
+    double mAbx=0;
+    double mAby=0;
+	double minx= points[0].x;
+    double maxx= points[0].x;
+    double miny= points[0].y;
+    double maxy= points[0].y;
+
+	for(int i=0;i<points.size();i++){
+		if(fabs(points[i].x)>mAbx){
+			mAbx=fabs(points[i].x);
+		}
+		if(fabs(points[i].y)>mAby){
+			mAby=fabs(points[i].y);
+		}
+		if(points[i].x<minx){
+			minx=points[i].x;
+		}
+		if(points[i].x>maxx){
+			maxx=points[i].x;
+		}
+		if(points[i].y<miny){
+			miny=points[i].y;
+		}
+		if(points[i].y>maxy){
+			maxy=points[i].y;
+		}
+	}
+
+    // Checking centroids to keep them on screen
+    for(int i=0;i< centroids.size();i++){
+        if(fabs(centroids[i].x)>mAbx){
+			mAbx= fabs(centroids[i].x);
+		}
+        if(fabs(centroids[i].y)>mAby){
+			mAby=fabs(centroids[i].y);
+		}
+    }
+
+    // Preventing division by zero
+    if(mAbx== 0){
+		mAbx=1;
+	}
+    if(mAby==0){
+		mAby= 1;
+	}
+
+	// Calculating scale
+    int pad=30;
+    double scalx=((graph.Width()/2.0)-pad)/mAbx;
+    double scaly=((graph.Height()/2.0)-pad)/mAby;
+    SCALE =min(scalx,scaly);
+
+	double cenx=(minx + maxx)/2.0;
+	double ceny=(miny + maxy)/2.0;
+
+	int cx=graph.CenterPoint().x- (int)(cenx* SCALE);
+	int cy= graph.CenterPoint().y+ (int)(ceny* SCALE);
+
+    CString tip;
     bool found=false;
-	
+
 	// POINTS
     for(int i=0;i<points.size();i++){
         int x=cx+(int)(points[i].x*SCALE);
@@ -316,9 +400,10 @@ BOOL GraphDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
-	srand((unsigned)time(NULL));					// taking two random points as centroids
+	srand((unsigned)time(NULL));					// taking random points as centroids
 	tooltip.Create(this);
     tooltip.AddTool(this,_T(""));
+	tooltip.Activate(TRUE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
