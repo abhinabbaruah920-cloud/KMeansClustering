@@ -85,7 +85,7 @@ BOOL CKMeansDlg::OnInitDialog()
     ck.AddString(_T("K = 3"));
     ck.AddString(_T("K = 4"));
     ck.AddString(_T("K = 5"));
-    ck.SetCurSel(0);      // Default = 2
+    ck.SetCurSel(0);					// Default = 2
 	graph.Create(IDD_GRAPH,this);		// Creating the Dlg box
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -174,6 +174,7 @@ void CKMeansDlg::OnBnClickedImport()
         return;
 
     CString filename=dlg.GetPathName();				// getting the entire path of the file
+
     // Convert CString to ANSI string for ifstream
     CStringA filenameA(filename);
     ifstream fin(filenameA);
@@ -185,19 +186,19 @@ void CKMeansDlg::OnBnClickedImport()
     vector<Data> points;
     string line;
     while(getline(fin,line)){			
-        if (line.empty())					// skipping blanks
+        if (line.empty())						// skipping blanks
             continue;
         stringstream ss(line);
         string xs;
         string ys;
-        if(!getline(ss,xs,','))		// taking x and assigning it to xs
+        if(!getline(ss,xs,','))					// taking x and assigning it to xs
             continue;
-        if(!getline(ss,ys))			// taking y and assigning it to xy
+        if(!getline(ss,ys))						// taking y and assigning it to xy
             continue;
-        Data d;						// temp storage 
-        d.x=stod(xs);						// stod: string to double for x
-        d.y=stod(ys);						// stod for y
-        points.push_back(d);				// appending to the vector
+        Data d;									// temp storage 
+        d.x=stod(xs);							// string to double for x and y
+        d.y=stod(ys);						
+        points.push_back(d);					// appending to the vector
     }
 	fin.close();
 
@@ -206,16 +207,16 @@ void CKMeansDlg::OnBnClickedImport()
 		return;
 	}
 
-	graph.centroids.clear();			// clearing previous centroids when importing again
-	graph.Set(points);						//setting points to the Graph
-	graph.ShowWindow(SW_SHOW);				// showing the graph dialog window
+	graph.centroids.clear();											// clearing previous centroids when importing again
+	graph.Set(points);													//setting points to the Graph
+	graph.ShowWindow(SW_SHOW);											// showing the graph dialog window
 	graph.SetWindowPos(NULL,700,250,0,0,SWP_NOSIZE|SWP_NOZORDER);
 	graph.Invalidate();
 	graph.UpdateWindow();			
 }
 
 
-void CKMeansDlg::OnBnClickedButton1()		// start button for execution of K means clustering Algo
+void CKMeansDlg::OnBnClickedButton1()						// start button for execution of K means clustering Algo
 {
     if(graph.points.empty()){
         AfxMessageBox(_T("Select CSV file first"));

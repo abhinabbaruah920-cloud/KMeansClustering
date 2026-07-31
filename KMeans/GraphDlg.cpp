@@ -48,11 +48,11 @@ void GraphDlg::processmsg(){
 void GraphDlg::OnPaint()
 {
     CPaintDC dc(this);
-    //main graph border
+    // Main graph border
     CRect graph(10,10,900,680);
     dc.Rectangle(graph);
 
-    // maximum absolute distance from (0,0) among all points and centroids
+    // Maximum absolute distance from (0,0) among centroids
     double mAbx=0;
     double mAby=0;
 
@@ -100,7 +100,7 @@ void GraphDlg::OnPaint()
 		mAby= 1;
 	}
 	// Calculating scale
-    int pad=30;
+    int pad=10;
     double scalx=((graph.Width()/2.0)-pad)/mAbx;
     double scaly=((graph.Height()/2.0)-pad)/mAby;
     SCALE =min(scalx,scaly);
@@ -111,14 +111,14 @@ void GraphDlg::OnPaint()
 	int cx=graph.CenterPoint().x- (int)(cenx* SCALE);
 	int cy= graph.CenterPoint().y+ (int)(ceny* SCALE);
 
-    // drawing x axis
+    // Drawing x axis
     dc.MoveTo(graph.left,cy);
     dc.LineTo(graph.right,cy);
     // Drawing y axis
     dc.MoveTo(cx,graph.top);
     dc.LineTo(cx,graph.bottom);
 
-    // brush initialization
+    // Brush initialization
     CBrush b[5];
     b[0].CreateSolidBrush(RGB(255,0,0));			// Red color
     b[1].CreateSolidBrush(RGB(0,255,0));			// Green colour
@@ -127,29 +127,29 @@ void GraphDlg::OnPaint()
     b[4].CreateSolidBrush(RGB(0,255,255));			// Cyan colour
     CBrush nb(RGB(255,255,255));					// White colour when importing
 
-    for(int i=0;i < points.size();i++){					// drawing the points
+    for(int i=0;i < points.size();i++){									// Drawing the points
         int x=cx+ (int)(points[i].x* SCALE);
         int y=cy- (int)(points[i].y* SCALE);
         
         if(points[i].cluster>=0){
-            dc.SelectObject(&b[points[i].cluster]);				// colouring the points based on clusters
+            dc.SelectObject(&b[points[i].cluster]);						// Colouring the points based on clusters
         }else{
-            dc.SelectObject(&nb);							// Initial color of points
+            dc.SelectObject(&nb);										// Initial color of points
         }
-        dc.Ellipse(x-5,y-5,x+5,y+5);
+        dc.Ellipse(x-4,y-4,x+4,y+4);
     }
 
     if(!points.empty()){
-		if(points[0].cluster<0){						// drawing the centroids
-			dc.SelectObject(&nb);						// Initial colour
+		if(points[0].cluster<0){										// Drawing the centroids
+			dc.SelectObject(&nb);										// Initial colour
 			 for(int i=0;i < centroids.size();i++){
 				int x=cx+ (int)(centroids[i].x* SCALE);
 				int y=cy- (int)(centroids[i].y* SCALE);
-				dc.Ellipse(x-10,y-10,x+10,y+10);
+				dc.Ellipse(x-8,y-8,x+8,y+8);
 			 }
 		}else{
 			for(int i=0;i<k && i<(int)centroids.size();i++){
-				dc.SelectObject(&b[i]);							// colouring the centroids 
+				dc.SelectObject(&b[i]);									// Colouring the centroids 
 				int x=cx+ (int)(centroids[i].x* SCALE);
 				int y=cy- (int)(centroids[i].y* SCALE);
 				dc.Ellipse(x-10,y-10,x+10,y+10);
@@ -159,8 +159,8 @@ void GraphDlg::OnPaint()
 }
 
 
-void GraphDlg::Set(const vector<Data>& d){			// temporary reference vector d
-    points=d;										// setting the points
+void GraphDlg::Set(const vector<Data>& d){				// Temporary reference vector d
+    points=d;
 }
 
 double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
@@ -169,20 +169,21 @@ double GraphDlg::Dist(Data p1,Data p2){				// Euclidian distance function
     return sqrt(dx*dx+dy*dy);
 }
 
-void GraphDlg::Init(){								// initialize KMEANS algo
+void GraphDlg::Init(){								// Initialize KMEANS algo
+
 	// choosing random centroids(distinct)
     centroids.clear();
     while(centroids.size() < k){
-        int r=rand()%points.size();					//random number picking
+        int r=rand()%points.size();									// Random number picking
         bool exist=false;
-        for(int i=0;i < centroids.size();i++){			// unique random number
+        for(int i=0;i < centroids.size();i++){										// Unique random number
             if(centroids[i].x==points[r].x && centroids[i].y==points[r].y){
-                exist=true;											// bool flag if exists
+                exist=true;															// Bool flag if exists
                 break;
             }
         }
         if(!exist){
-            centroids.push_back(points[r]);			// adding unique rand number
+            centroids.push_back(points[r]);					// Adding unique rand number
 		}
     }
     Invalidate();
@@ -192,17 +193,18 @@ void GraphDlg::Init(){								// initialize KMEANS algo
 
     // Assign every point to the nearest centroid
     for(int i=0;i < points.size();i++){
-        double nearest= Dist(points[i],centroids[0]);		// shortest distance from point to centroid
-        int cluster=0;										// index of closest centroid
+        double nearest= Dist(points[i],centroids[0]);			// Shortest distance from point to centroid
+        int cluster=0;											// Index of closest centroid
+
 		// calculating closest centroids
         for(int j=1;j < k;j++){
             double d =Dist(points[i],centroids[j]);		
             if(d<nearest){
-                nearest= d;				// updating closest distance
-                cluster=j;				// updating the index to this closer centroid
+                nearest= d;									// Updating closest distance
+                cluster=j;									// Updating the index to this closer centroid
             }
         }
-        points[i].cluster =cluster;		//saving the final cluster assignment
+        points[i].cluster =cluster;					// Saving the final cluster assignment
     }
     Invalidate();
     UpdateWindow();
@@ -210,25 +212,25 @@ void GraphDlg::Init(){								// initialize KMEANS algo
     Sleep(500);
 }
 
-void GraphDlg::Update(){						// updating the centroids
+void GraphDlg::Update(){								// Updating the centroids
 	vector<double> sumx(k,0);
 	vector<double> sumy(k,0);
 	vector<int> count(k,0);
-	for(int i=0;i<points.size();i++){			// summation of all the x and y points
+	for(int i=0;i<points.size();i++){					// Summation of all the x and y points
 		int c=points[i].cluster;
 		sumx[c]+=points[i].x;				
 		sumy[c]+=points[i].y;
-		count[c]++;								// adding counter for division by zero
+		count[c]++;										// Adding counter for division by zero
 	}
 	for(int i=0;i<k;i++){
 		if(count[i]> 0){
-			centroids[i].x= sumx[i]/count[i];		// Mean value of x for centroids
-			centroids[i].y= sumy[i]/count[i];		// Mean value of y for centroids
+			centroids[i].x= sumx[i]/count[i];			// Mean value of x for centroids
+			centroids[i].y= sumy[i]/count[i];			// Mean value of y for centroids
 		}
 	}
 }
 
-void GraphDlg::Assign(){						// reassigning points to clusters
+void GraphDlg::Assign(){								// Reassigning points to clusters
 	for(int i=0;i<points.size();i++){
 		double nearest= Dist(points[i],centroids[0]);
 		int cluster=0;
@@ -236,67 +238,67 @@ void GraphDlg::Assign(){						// reassigning points to clusters
 		// assigning points to the nearest centroids
 		for(int j=1;j < k;j++){
 			double d=Dist(points[i],centroids[j]);
-			if(d<nearest){					// Update the assigned cluster if closer centroid is found
+			if(d<nearest){								// Update the assigned cluster if closer centroid is found
 				nearest= d;
 				cluster=j;
 			}
 		}
-		points[i].cluster =cluster;		// storing the closest clusters
+		points[i].cluster =cluster;				// Storing the closest clusters
 	}
 
 }
 
 
-double GraphDlg::CalErr(){						// error calculation for convergence
+double GraphDlg::CalErr(){								// Error calculation for convergence
 	double err=0;
 	for(int i=0;i<points.size();i++){
 		double d= Dist(points[i],centroids[points[i].cluster]);
-		err+=d*d;									// calculation of sum of squared errors
+		err+=d*d;													// Calculation of sum of squared errors
 	}
 	return err;
 }
 
-void GraphDlg::run(){						// run function to start K means Clustering
+void GraphDlg::run(){								// Run function to start K means Clustering
 	running=true;
 	Init();
 	newErr=CalErr();
     while(true){
-        double prevErr=newErr;				// storing previous error
+        double prevErr=newErr;						// Previous error
         
-		Update();							// Updating the centroids 
+		Update();									// Updating the centroids 
 		Invalidate();
         UpdateWindow();
 		processmsg();
 		Sleep(500);
 
-		Assign();							// assigning the cluster to the updated centroids
+		Assign();									// Assigning the cluster to the updated centroids
 		Invalidate();
         UpdateWindow();
 		processmsg();
 		Sleep(500);
 
-        newErr=CalErr();					// calculating the new error and storing to the total error
+        newErr=CalErr();							// New error 
 
-        if(fabs(prevErr-newErr)<0.001)		// comparing the absolute error for convergence
+        if(fabs(prevErr-newErr)<0.001)				// Convergence
             break;
     }
 	running=false;
 }
 
-BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)				// relay messages to tooltipCtrl
+BOOL GraphDlg::PreTranslateMessage(MSG* pMsg)						// Relay messages to tooltipCtrl
 {
     tooltip.RelayEvent(pMsg);
     return CDialogEx::PreTranslateMessage(pMsg);
 }
 
-void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show points when hovering
+void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)				// Function to show points when hovering
 {
 	if(points.empty()){
         CDialogEx::OnMouseMove(nFlags, point);
         return;
     }
 	    
-	// Same as OnPaint()
+	// Onpaint function part
     CRect graph(10,10,900,680);
     double mAbx=0;
     double mAby=0;
@@ -345,7 +347,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show point
 	}
 
 	// Calculating scale
-    int pad=30;
+    int pad=10;
     double scalx=((graph.Width()/2.0)-pad)/mAbx;
     double scaly=((graph.Height()/2.0)-pad)/mAby;
     SCALE =min(scalx,scaly);
@@ -367,7 +369,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show point
         int dy=point.y-y;
 
         if(dx*dx+dy*dy<=50){
-            tip.Format(_T("(%.1f,%.1f)"),points[i].x,points[i].y);		// showing the points till first decimal place
+            tip.Format(_T("(%.1f,%.1f)"),points[i].x,points[i].y);								// Showing the points
             found=true;
             break;
         }
@@ -380,7 +382,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)		// function to show point
 		int dx=point.x-x;
 		int dy=point.y-y;
 		if(dx*dx+dy*dy<= 50){
-			tip.Format(_T("Centroid %d: (%.2f, %.2f)"),i+1,centroids[i].x,centroids[i].y); // Showing the centroids till second decimal place
+			tip.Format(_T("Centroid %d: (%.2f, %.2f)"),i+1,centroids[i].x,centroids[i].y);		// Showing the centroids
 			found=true;
 			break;
 		}
@@ -400,7 +402,7 @@ BOOL GraphDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
-	srand((unsigned)time(NULL));					// taking random points as centroids
+	srand((unsigned)time(NULL));					// Taking random points as centroids
 	tooltip.Create(this);
     tooltip.AddTool(this,_T(""));
 	tooltip.Activate(TRUE);
