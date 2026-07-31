@@ -61,7 +61,7 @@ void GraphDlg::OnPaint()
     double miny= points[0].y;
     double maxy= points[0].y;
 
-	for(int i=0;i<points.size();i++){
+	for(size_t i=0;i<points.size();i++){
 		if(fabs(points[i].x)>mAbx){
 			mAbx=fabs(points[i].x);
 		}
@@ -83,7 +83,7 @@ void GraphDlg::OnPaint()
 	}
 
     // Checking centroids to keep them on screen
-    for(int i=0;i< centroids.size();i++){
+    for(size_t i=0;i< centroids.size();i++){
         if(fabs(centroids[i].x)>mAbx){
 			mAbx= fabs(centroids[i].x);
 		}
@@ -127,7 +127,7 @@ void GraphDlg::OnPaint()
     b[4].CreateSolidBrush(RGB(0,255,255));			// Cyan colour
     CBrush nb(RGB(255,255,255));					// White colour when importing
 
-    for(int i=0;i < points.size();i++){									// Drawing the points
+    for(size_t i=0;i < points.size();i++){									// Drawing the points
         int x=cx+ (int)(points[i].x* SCALE);
         int y=cy- (int)(points[i].y* SCALE);
         
@@ -136,19 +136,19 @@ void GraphDlg::OnPaint()
         }else{
             dc.SelectObject(&nb);										// Initial color of points
         }
-        dc.Ellipse(x-4,y-4,x+4,y+4);
+        dc.Ellipse(x-5,y-5,x+5,y+5);
     }
 
     if(!points.empty()){
 		if(points[0].cluster<0){										// Drawing the centroids
 			dc.SelectObject(&nb);										// Initial colour
-			 for(int i=0;i < centroids.size();i++){
+			 for(size_t i=0;i < centroids.size();i++){
 				int x=cx+ (int)(centroids[i].x* SCALE);
 				int y=cy- (int)(centroids[i].y* SCALE);
 				dc.Ellipse(x-8,y-8,x+8,y+8);
 			 }
 		}else{
-			for(int i=0;i<k && i<(int)centroids.size();i++){
+			for(size_t i=0;i<k && i<(int)centroids.size();i++){
 				dc.SelectObject(&b[i]);									// Colouring the centroids 
 				int x=cx+ (int)(centroids[i].x* SCALE);
 				int y=cy- (int)(centroids[i].y* SCALE);
@@ -176,7 +176,7 @@ void GraphDlg::Init(){								// Initialize KMEANS algo
     while(centroids.size() < k){
         int r=rand()%points.size();									// Random number picking
         bool exist=false;
-        for(int i=0;i < centroids.size();i++){										// Unique random number
+        for(size_t i=0;i < centroids.size();i++){										// Unique random number
             if(centroids[i].x==points[r].x && centroids[i].y==points[r].y){
                 exist=true;															// Bool flag if exists
                 break;
@@ -189,10 +189,10 @@ void GraphDlg::Init(){								// Initialize KMEANS algo
     Invalidate();
     UpdateWindow();
     processmsg();
-    Sleep(500);
+    Sleep(300);
 
     // Assign every point to the nearest centroid
-    for(int i=0;i < points.size();i++){
+    for(size_t i=0;i < points.size();i++){
         double nearest= Dist(points[i],centroids[0]);			// Shortest distance from point to centroid
         int cluster=0;											// Index of closest centroid
 
@@ -209,14 +209,14 @@ void GraphDlg::Init(){								// Initialize KMEANS algo
     Invalidate();
     UpdateWindow();
     processmsg();
-    Sleep(500);
+    Sleep(300);
 }
 
 void GraphDlg::Update(){								// Updating the centroids
 	vector<double> sumx(k,0);
 	vector<double> sumy(k,0);
 	vector<int> count(k,0);
-	for(int i=0;i<points.size();i++){					// Summation of all the x and y points
+	for(size_t i=0;i<points.size();i++){					// Summation of all the x and y points
 		int c=points[i].cluster;
 		sumx[c]+=points[i].x;				
 		sumy[c]+=points[i].y;
@@ -231,7 +231,7 @@ void GraphDlg::Update(){								// Updating the centroids
 }
 
 void GraphDlg::Assign(){								// Reassigning points to clusters
-	for(int i=0;i<points.size();i++){
+	for(size_t i=0;i<points.size();i++){
 		double nearest= Dist(points[i],centroids[0]);
 		int cluster=0;
 		
@@ -251,7 +251,7 @@ void GraphDlg::Assign(){								// Reassigning points to clusters
 
 double GraphDlg::CalErr(){								// Error calculation for convergence
 	double err=0;
-	for(int i=0;i<points.size();i++){
+	for(size_t i=0;i<points.size();i++){
 		double d= Dist(points[i],centroids[points[i].cluster]);
 		err+=d*d;													// Calculation of sum of squared errors
 	}
@@ -269,13 +269,13 @@ void GraphDlg::run(){								// Run function to start K means Clustering
 		Invalidate();
         UpdateWindow();
 		processmsg();
-		Sleep(500);
+		Sleep(300);
 
 		Assign();									// Assigning the cluster to the updated centroids
 		Invalidate();
         UpdateWindow();
 		processmsg();
-		Sleep(500);
+		Sleep(300);
 
         newErr=CalErr();							// New error 
 
@@ -307,7 +307,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)				// Function to show poi
     double miny= points[0].y;
     double maxy= points[0].y;
 
-	for(int i=0;i<points.size();i++){
+	for(size_t i=0;i<points.size();i++){
 		if(fabs(points[i].x)>mAbx){
 			mAbx=fabs(points[i].x);
 		}
@@ -329,7 +329,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)				// Function to show poi
 	}
 
     // Checking centroids to keep them on screen
-    for(int i=0;i< centroids.size();i++){
+    for(size_t i=0;i< centroids.size();i++){
         if(fabs(centroids[i].x)>mAbx){
 			mAbx= fabs(centroids[i].x);
 		}
@@ -362,7 +362,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)				// Function to show poi
     bool found=false;
 
 	// POINTS
-    for(int i=0;i<points.size();i++){
+    for(size_t i=0;i<points.size();i++){
         int x=cx+(int)(points[i].x*SCALE);
         int y=cy-(int)(points[i].y*SCALE);
         int dx=point.x-x;
@@ -376,7 +376,7 @@ void GraphDlg::OnMouseMove(UINT nFlags, CPoint point)				// Function to show poi
     }
 	
 	// CENTROIDS
-	for(int i=0;i<(int)centroids.size();i++){
+	for(size_t i=0;i<(int)centroids.size();i++){
 		int x=cx+ centroids[i].x* SCALE;
 		int y=cy- centroids[i].y* SCALE;
 		int dx=point.x-x;
