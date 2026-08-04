@@ -199,27 +199,31 @@ void GraphDlg::Init(){								// Initialize KMEANS algo
     Sleep(300);
 }
 
-void GraphDlg::LBG(){
+void GraphDlg::LBG(){			// initialize Linde-Buzo-Grey Algorithm
     centroids.clear();
     Data c;
     c.x=0;
     c.y=0;
-    for(size_t i=0;i<points.size();i++){
+
+    for(size_t i=0;i<points.size();i++){		//sum of points
         c.x+=points[i].x;
         c.y+=points[i].y;
     }
+	// mean calculation
     c.x/=points.size();
     c.y/=points.size();
+	// starting with single centroid
     centroids.push_back(c);
 }
 
-void GraphDlg::Split(){
+void GraphDlg::Split(){							// splitting the centroids
     vector<Data> temp;
-    const double ep=0.05;
+    const double ep=0.05;						// epsilon
     for(size_t i=0;i<centroids.size();i++){
         Data c1=centroids[i];
         Data c2=centroids[i];
 
+		// shifting in opposite directions
         c1.x+=ep;
         c1.y+=ep;
         c2.x-=ep;
@@ -232,13 +236,13 @@ void GraphDlg::Split(){
 }
 
 void GraphDlg::runLBG(){
-    LBG();
-    while((int)centroids.size()<k){
+    LBG();								//initialiae LBG algo
+    while(centroids.size()<k){
         Split();
 		Assign();
 		newErr= CalErr();
         double err;
-        do{
+        do{					//running Kmeans algo
             Assign();
 
 			Invalidate();
@@ -255,7 +259,7 @@ void GraphDlg::runLBG(){
 
             err=newErr;
             newErr=CalErr();
-        }while(fabs(err-newErr)>0.001);
+        }while(fabs(err-newErr)>0.001);			//convergence
     }
 }
 
