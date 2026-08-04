@@ -33,7 +33,10 @@ public:
     double CalErr();								// calculate error for convergence
 	void processmsg();
 	double SCALE;									// defining scale
-	bool running;									
+	bool running;
+	void LBG();										// initialize LBG
+	void Split();									// splitting the centroids
+	void runLBG();
 // Dialog Data
 	enum { IDD = IDD_GRAPH };
 

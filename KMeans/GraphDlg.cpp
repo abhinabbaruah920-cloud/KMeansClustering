@@ -191,26 +191,74 @@ void GraphDlg::Init(){								// Initialize KMEANS algo
     processmsg();
     Sleep(300);
 
-    // Assign every point to the nearest centroid
-    for(size_t i=0;i < points.size();i++){
-        double nearest= Dist(points[i],centroids[0]);			// Shortest distance from point to centroid
-        int cluster=0;											// Index of closest centroid
+    Assign();					// Assign every point to the nearest centroid
 
-		// calculating closest centroids
-        for(int j=1;j < k;j++){
-            double d =Dist(points[i],centroids[j]);		
-            if(d<nearest){
-                nearest= d;									// Updating closest distance
-                cluster=j;									// Updating the index to this closer centroid
-            }
-        }
-        points[i].cluster =cluster;					// Saving the final cluster assignment
-    }
     Invalidate();
     UpdateWindow();
     processmsg();
     Sleep(300);
 }
+
+void GraphDlg::LBG(){
+    centroids.clear();
+    Data c;
+    c.x=0;
+    c.y=0;
+    for(size_t i=0;i<points.size();i++){
+        c.x+=points[i].x;
+        c.y+=points[i].y;
+    }
+    c.x/=points.size();
+    c.y/=points.size();
+    centroids.push_back(c);
+}
+
+void GraphDlg::Split(){
+    vector<Data> temp;
+    const double ep=0.05;
+    for(size_t i=0;i<centroids.size();i++){
+        Data c1=centroids[i];
+        Data c2=centroids[i];
+
+        c1.x+=ep;
+        c1.y+=ep;
+        c2.x-=ep;
+        c2.y-=ep;
+
+        temp.push_back(c1);
+        temp.push_back(c2);
+    }
+    centroids=temp;
+}
+
+void GraphDlg::runLBG(){
+    LBG();
+    while((int)centroids.size()<k){
+        Split();
+		Assign();
+		newErr= CalErr();
+        double err;
+        do{
+            Assign();
+
+			Invalidate();
+			UpdateWindow();
+			processmsg();
+			Sleep(300);
+            
+			Update();
+
+			Invalidate();
+			UpdateWindow();
+			processmsg();
+			Sleep(300);
+
+            err=newErr;
+            newErr=CalErr();
+        }while(fabs(err-newErr)>0.001);
+    }
+}
+
 
 void GraphDlg::Update(){								// Updating the centroids
 	vector<double> sumx(k,0);
