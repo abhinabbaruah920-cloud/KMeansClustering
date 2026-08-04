@@ -148,7 +148,7 @@ void GraphDlg::OnPaint()
 				dc.Ellipse(x-8,y-8,x+8,y+8);
 			 }
 		}else{
-			for(size_t i=0;i<k && i<(int)centroids.size();i++){
+			for(size_t i=0;i<k && i<centroids.size();i++){
 				dc.SelectObject(&b[i]);									// Colouring the centroids 
 				int x=cx+ (int)(centroids[i].x* SCALE);
 				int y=cy- (int)(centroids[i].y* SCALE);
@@ -200,7 +200,7 @@ void GraphDlg::Init(){								// Initialize KMEANS algo
 }
 
 void GraphDlg::LBG(){			// initialize Linde-Buzo-Grey Algorithm
-    centroids.clear();
+	centroids.clear();
     Data c;
     c.x=0;
     c.y=0;
@@ -237,6 +237,10 @@ void GraphDlg::Split(){							// splitting the centroids
 
 void GraphDlg::runLBG(){
     LBG();								//initialize LBG algo
+	Invalidate();
+	UpdateWindow();
+	processmsg();
+	Sleep(300);
     while(centroids.size()<k){
         Split();
 		Assign();
@@ -288,7 +292,7 @@ void GraphDlg::Assign(){								// Reassigning points to clusters
 		int cluster=0;
 		
 		// assigning points to the nearest centroids
-		for(int j=1;j < k;j++){
+		for(int j=1;j <centroids.size();j++){
 			double d=Dist(points[i],centroids[j]);
 			if(d<nearest){								// Update the assigned cluster if closer centroid is found
 				nearest= d;
@@ -312,27 +316,31 @@ double GraphDlg::CalErr(){								// Error calculation for convergence
 
 void GraphDlg::run(){								// Run function to start K means Clustering
 	running=true;
-	Init();
-	newErr=CalErr();
-    while(true){
-        double prevErr=newErr;						// Previous error
-        
-		Update();									// Updating the centroids 
-		Invalidate();
-        UpdateWindow();
-		processmsg();
-		Sleep(300);
+    if(use){
+        runLBG();
+    }else{
+        Init();
+        newErr=CalErr();
+        while(true){
+            double prevErr=newErr;
+            Update();
 
-		Assign();									// Assigning the cluster to the updated centroids
-		Invalidate();
-        UpdateWindow();
-		processmsg();
-		Sleep(300);
+            Invalidate();
+            UpdateWindow();
+            processmsg();
+            Sleep(300);
 
-        newErr=CalErr();							// New error 
+            Assign();
 
-        if(fabs(prevErr-newErr)<0.001)				// Convergence
-            break;
+            Invalidate();
+            UpdateWindow();
+            processmsg();
+            Sleep(300);
+
+            newErr=CalErr();
+            if(fabs(prevErr-newErr)<0.001)
+                break;
+        }
     }
 	running=false;
 }

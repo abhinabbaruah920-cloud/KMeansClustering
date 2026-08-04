@@ -85,7 +85,7 @@ BOOL CKMeansDlg::OnInitDialog()
 	//combobox contents
     // Algorithm Combo
     algo.AddString(_T("Lloyd"));
-    algo.AddString(_T("LBG"));
+    algo.AddString(_T("Linde-Buzo-Gray"));
     algo.SetCurSel(0);
     // K Combo(Lloyd)
     ck.AddString(_T("2"));
@@ -234,9 +234,9 @@ void CKMeansDlg::OnBnClickedButton1()						// start button for execution of K me
 	}
 
 	CString str;
-    ck.GetLBText(ck.GetCurSel(), str);
-    graph.k = _ttoi(str);
-    graph.use = (algo.GetCurSel() == 1);
+    ck.GetLBText(ck.GetCurSel(),str);		
+    graph.k=_ttoi(str);
+    graph.use=(algo.GetCurSel() == 1);
     graph.run();
 }
 
@@ -248,7 +248,7 @@ void CKMeansDlg::OnCbnSelchangeComboAlgo()
 {
 	ck.ResetContent();
 
-    if(algo.GetCurSel() == 0){		// Lloyd
+    if(algo.GetCurSel() ==0){		// Lloyd
         ck.AddString(_T("2"));
         ck.AddString(_T("3"));
         ck.AddString(_T("4"));
