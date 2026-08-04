@@ -37,6 +37,8 @@ public:
 	void LBG();										// initialize LBG
 	void Split();									// splitting the centroids
 	void runLBG();
+	bool use;										// Switch between LBG and Lloyd
+
 // Dialog Data
 	enum { IDD = IDD_GRAPH };
 

@@ -60,6 +60,7 @@ void CKMeansDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX,IDC_COMBO_K,ck);
+	DDX_Control(pDX, IDC_COMBO_ALGO, algo);
 }
 
 BEGIN_MESSAGE_MAP(CKMeansDlg, CDialogEx)
@@ -68,6 +69,7 @@ BEGIN_MESSAGE_MAP(CKMeansDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_IMPORT, &CKMeansDlg::OnBnClickedImport)
 	ON_BN_CLICKED(IDC_BUTTON1, &CKMeansDlg::OnBnClickedButton1)
+	ON_CBN_SELCHANGE(IDC_COMBO_ALGO, &CKMeansDlg::OnCbnSelchangeComboAlgo)
 END_MESSAGE_MAP()
 
 
@@ -81,11 +83,16 @@ BOOL CKMeansDlg::OnInitDialog()
 	SetWindowPos(NULL,170,250,0,0,SWP_NOSIZE|SWP_NOZORDER);
 
 	//combobox contents
-	ck.AddString(_T("K = 2"));
-    ck.AddString(_T("K = 3"));
-    ck.AddString(_T("K = 4"));
-    ck.AddString(_T("K = 5"));
-    ck.SetCurSel(0);					// Default = 2
+    // Algorithm Combo
+    algo.AddString(_T("Lloyd"));
+    algo.AddString(_T("LBG"));
+    algo.SetCurSel(0);
+    // K Combo(Lloyd)
+    ck.AddString(_T("2"));
+    ck.AddString(_T("3"));
+    ck.AddString(_T("4"));
+    ck.AddString(_T("5"));
+    ck.SetCurSel(0);
 	graph.Create(IDD_GRAPH,this);		// Creating the Dlg box
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -225,6 +232,31 @@ void CKMeansDlg::OnBnClickedButton1()						// start button for execution of K me
 	if(graph.running){
 		return;
 	}
-	graph.k=ck.GetCurSel()+2;
+
+	CString str;
+    ck.GetLBText(ck.GetCurSel(), str);
+    graph.k = _ttoi(str);
+    graph.use = (algo.GetCurSel() == 1);
     graph.run();
+}
+
+
+
+
+
+void CKMeansDlg::OnCbnSelchangeComboAlgo()
+{
+	ck.ResetContent();
+
+    if(algo.GetCurSel() == 0){		// Lloyd
+        ck.AddString(_T("2"));
+        ck.AddString(_T("3"));
+        ck.AddString(_T("4"));
+        ck.AddString(_T("5"));
+	}else{							// LBG
+        ck.AddString(_T("2"));
+        ck.AddString(_T("4"));
+    }
+
+    ck.SetCurSel(0);
 }

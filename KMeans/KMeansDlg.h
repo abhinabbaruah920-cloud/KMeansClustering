@@ -34,4 +34,7 @@ public:
 	afx_msg void OnBnClickedImport();
 	afx_msg void OnBnClickedButton1();
 	CComboBox ck;
+	afx_msg void OnCbnSelchangeCombo2();
+	CComboBox algo;
+	afx_msg void OnCbnSelchangeComboAlgo();
 };

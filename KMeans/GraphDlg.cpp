@@ -236,7 +236,7 @@ void GraphDlg::Split(){							// splitting the centroids
 }
 
 void GraphDlg::runLBG(){
-    LBG();								//initialiae LBG algo
+    LBG();								//initialize LBG algo
     while(centroids.size()<k){
         Split();
 		Assign();
