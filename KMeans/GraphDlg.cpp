@@ -189,14 +189,14 @@ void GraphDlg::Init(){								// Initialize KMEANS algo
     Invalidate();
     UpdateWindow();
     processmsg();
-    Sleep(300);
+    Sleep(200);
 
     Assign();					// Assign every point to the nearest centroid
 
     Invalidate();
     UpdateWindow();
     processmsg();
-    Sleep(300);
+    Sleep(200);
 }
 
 void GraphDlg::LBG(){			// initialize Linde-Buzo-Grey Algorithm
@@ -240,7 +240,7 @@ void GraphDlg::runLBG(){
 	Invalidate();
 	UpdateWindow();
 	processmsg();
-	Sleep(300);
+	Sleep(200);
     while(centroids.size()<k){
         Split();
 		Assign();
@@ -252,14 +252,14 @@ void GraphDlg::runLBG(){
 			Invalidate();
 			UpdateWindow();
 			processmsg();
-			Sleep(300);
+			Sleep(200);
             
 			Update();
 
 			Invalidate();
 			UpdateWindow();
 			processmsg();
-			Sleep(300);
+			Sleep(200);
 
             err=newErr;
             newErr=CalErr();
@@ -328,14 +328,14 @@ void GraphDlg::run(){								// Run function to start K means Clustering
             Invalidate();
             UpdateWindow();
             processmsg();
-            Sleep(300);
+            Sleep(200);
 
             Assign();
 
             Invalidate();
             UpdateWindow();
             processmsg();
-            Sleep(300);
+            Sleep(200);
 
             newErr=CalErr();
             if(fabs(prevErr-newErr)<0.001)

@@ -232,7 +232,10 @@ void CKMeansDlg::OnBnClickedButton1()						// start button for execution of K me
 	if(graph.running){
 		return;
 	}
-
+	graph.centroids.clear();
+	graph.Invalidate();
+	graph.UpdateWindow();
+	Sleep(80);
 	CString str;
     ck.GetLBText(ck.GetCurSel(),str);		
     graph.k=_ttoi(str);
