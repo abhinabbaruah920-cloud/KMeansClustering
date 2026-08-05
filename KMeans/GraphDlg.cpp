@@ -199,31 +199,31 @@ void GraphDlg::Init(){								// Initialize KMEANS algo
     Sleep(200);
 }
 
-void GraphDlg::LBG(){			// initialize Linde-Buzo-Grey Algorithm
+void GraphDlg::LBG(){			// Initialize Linde-Buzo-Grey Algorithm
 	centroids.clear();
     Data c;
     c.x=0;
     c.y=0;
 
-    for(size_t i=0;i<points.size();i++){		//sum of points
+    for(size_t i=0;i<points.size();i++){		// Sum of points
         c.x+=points[i].x;
         c.y+=points[i].y;
     }
-	// mean calculation
+	// Mean calculation
     c.x/=points.size();
     c.y/=points.size();
-	// starting with single centroid
+	// Starting with single centroid
     centroids.push_back(c);
 }
 
-void GraphDlg::Split(){							// splitting the centroids
+void GraphDlg::Split(){							// Splitting the centroids
     vector<Data> temp;
-    const double ep=0.05;						// epsilon
+    const double ep=0.05;						// Epsilon
     for(size_t i=0;i<centroids.size();i++){
         Data c1=centroids[i];
         Data c2=centroids[i];
 
-		// shifting in opposite directions
+		// Shifting in opposite directions
         c1.x+=ep;
         c1.y+=ep;
         c2.x-=ep;
@@ -236,7 +236,7 @@ void GraphDlg::Split(){							// splitting the centroids
 }
 
 void GraphDlg::runLBG(){
-    LBG();								//initialize LBG algo
+    LBG();								// Initialize LBG algo
 	Invalidate();
 	UpdateWindow();
 	processmsg();
@@ -246,7 +246,7 @@ void GraphDlg::runLBG(){
 		Assign();
 		newErr= CalErr();
         double err;
-        do{					//running Kmeans algo
+        do{					// Running Kmeans algo
             Assign();
 
 			Invalidate();
@@ -263,7 +263,7 @@ void GraphDlg::runLBG(){
 
             err=newErr;
             newErr=CalErr();
-        }while(fabs(err-newErr)>0.001);			//convergence
+        }while(fabs(err-newErr)>0.001);			// Convergence
     }
 }
 
@@ -291,7 +291,7 @@ void GraphDlg::Assign(){								// Reassigning points to clusters
 		double nearest= Dist(points[i],centroids[0]);
 		int cluster=0;
 		
-		// assigning points to the nearest centroids
+		// Assigning points to the nearest centroids
 		for(int j=1;j <centroids.size();j++){
 			double d=Dist(points[i],centroids[j]);
 			if(d<nearest){								// Update the assigned cluster if closer centroid is found
@@ -314,7 +314,7 @@ double GraphDlg::CalErr(){								// Error calculation for convergence
 	return err;
 }
 
-void GraphDlg::run(){								// Run function to start K means Clustering
+void GraphDlg::run(){								// Run function to start K means Clustering (Lloyd)
 	running=true;
     if(use){
         runLBG();

@@ -142,6 +142,14 @@ void CKMeansDlg::OnSysCommand(UINT nID, LPARAM lParam)
 
 void CKMeansDlg::OnPaint()
 {
+	CPaintDC dc(this);
+	
+	CRect graph(-1,-1,500,600);
+    dc.Rectangle(graph);
+
+
+	dc.TextOut(25,61, _T("Algorithm : "));
+	dc.TextOut(90,122, _T("K : "));
 	if (IsIconic())
 	{
 		CPaintDC dc(this); // device context for painting
@@ -226,7 +234,7 @@ void CKMeansDlg::OnBnClickedImport()
 void CKMeansDlg::OnBnClickedButton1()						// start button for execution of K means clustering Algo
 {
     if(graph.points.empty()){
-        AfxMessageBox(_T("Select CSV file first"));
+        AfxMessageBox(_T("Import CSV file first"));
         return;
     }
 	if(graph.running){
